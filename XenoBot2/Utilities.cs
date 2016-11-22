@@ -84,32 +84,6 @@ namespace XenoBot2
 		public static Version GetVersion() => Assembly.GetExecutingAssembly().GetName().Version;
 
 		/// <summary>
-		/// Converts a <see cref="CommandCategory"/> into a nice human-friendly string.
-		/// </summary>
-		/// <param name="meta"></param>
-		/// <returns></returns>
-		internal static string GetCategoryString(this Command meta)
-		{
-			var category = meta.AliasFor == null ? meta.Category : meta.ResolveCommand().Category;
-			switch (category)
-			{
-				case CommandCategory.Unknown:
-				case CommandCategory.Base:
-				case CommandCategory.Utility:
-				case CommandCategory.Administration:
-				case CommandCategory.Fun:
-				case CommandCategory.Retorts:
-					return category.Humanize();
-
-				case CommandCategory.FunOffensive:
-					return "Fun (Offensive)";
-
-				default:
-					throw new ArgumentOutOfRangeException(nameof(category), category, null);
-			}
-		}
-
-		/// <summary>
 		///		Checks if a <see cref="Command"/> has an Alias, and resolves it to a <see cref="Command"/>.
 		/// </summary>
 		/// <param name="command">The command to resolve the alias for.</param>

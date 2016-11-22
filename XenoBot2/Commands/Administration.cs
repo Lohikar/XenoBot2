@@ -109,7 +109,7 @@ namespace XenoBot2.Commands
 					                         $"InvokeCooldown: {cmd.Meta.MinimumTimeBetweenInvokes.Humanize()}\n" +
 					                         $"Flags: {cmddata.Flags}\n" +
 											 $"PermissionFlags: {cmddata.Permission}\n" +
-					                         $"Category: {cmddata.Category.Humanize()}\n" +
+					                         $"Category: {cmddata.HelpCategory}\n" +
 					                         "```", channel);
 					break;
 				case "setgame":

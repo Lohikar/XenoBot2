@@ -17,7 +17,7 @@ namespace XenoBot2
 				"$date", new Command
 				{
 					HelpText = "Shows the current date in UTC.",
-					Category = CommandCategory.Utility,
+					HelpCategory = "Utility",
 					Definition = Commands.Utility.Date
 				}
 			},
@@ -25,7 +25,7 @@ namespace XenoBot2
 				"$time", new Command
 				{
 					HelpText = "Shows the current time in UTC",
-					Category = CommandCategory.Utility,
+					HelpCategory = "Utility",
 					Definition = Commands.Utility.Time
 				}
 			},
@@ -34,7 +34,7 @@ namespace XenoBot2
 				{
 					HelpText = "Enables a disabled command on the current channel.",
 					Permission = PermissionFlag.Administrator,
-					Category = CommandCategory.Administration,
+					HelpCategory = "Administration",
 					Flags = CommandFlag.NoPrivateChannel | CommandFlag.NonDisableable,
 					Definition = Commands.Administration.Enable
 				}
@@ -44,7 +44,7 @@ namespace XenoBot2
 				{
 					HelpText = "Disables an enabled command on the current channel.",
 					Permission = PermissionFlag.Administrator,
-					Category = CommandCategory.Administration,
+					HelpCategory = "Administration",
 					Flags = CommandFlag.NoPrivateChannel | CommandFlag.NonDisableable,
 					Definition = Commands.Administration.Disable
 				}
@@ -59,7 +59,7 @@ namespace XenoBot2
 				"$cat", new Command
 				{
 					HelpText = "I would like to unsubscribe from cat facts.",
-					Category = CommandCategory.Fun,
+					HelpCategory = "Fun",
 					Definition = Commands.Fun.CatFact
 				}
 			},
@@ -67,7 +67,7 @@ namespace XenoBot2
 				"$commit", new Command
 				{
 					HelpText = "Shows a humorous commit message from WhatTheCommit.",
-					Category = CommandCategory.Fun,
+					HelpCategory = "Fun",
 					Definition = Commands.Fun.WhatTheCommit
 				}
 			},
@@ -75,7 +75,7 @@ namespace XenoBot2
 				"$echo", new Command
 				{
 					HelpText = "Echos the command arguments.",
-					Category = CommandCategory.Utility,
+					HelpCategory = "Utility",
 					Definition = Commands.Utility.Echo
 				}
 			},
@@ -83,7 +83,7 @@ namespace XenoBot2
 				"$me", new Command
 				{
 					HelpText = "Prints some basic profile info about you.",
-					Category = CommandCategory.Utility,
+					HelpCategory = "Utility",
 					Definition = Commands.Utility.Me
 				}
 			},
@@ -99,7 +99,7 @@ namespace XenoBot2
 								   "* wordord - Words (ordinal), i.e. \"twenty seventh\"\n" +
 								   "* metric - Metric prefixed, i.e. \"200K\"\n" +
 								   "Optionally, a 2-letter culture code can be specified to get output in that language's format.",
-					Category = CommandCategory.Utility,
+					HelpCategory = "Utility",
 					Definition = Commands.Utility.ConvertNumber
 				}
 			},
@@ -114,7 +114,7 @@ namespace XenoBot2
 				{
 					HelpText = "Shuts down the bot.",
 					Permission = PermissionFlag.BotAdministrator,
-					Category = CommandCategory.Administration,
+					HelpCategory = "Administration",
 					Definition = Commands.Administration.HaltBot,
 					Flags = CommandFlag.NonDisableable
 				}
@@ -123,7 +123,7 @@ namespace XenoBot2
 				"$help", new Command
 				{
 					HelpText = "Displays this highly informative help text. Use \"$help command\" to get help for command.",
-					Category = CommandCategory.Base,
+					HelpCategory = "CommandCategory.Base",
 					Definition = Commands.Base.Help,
 					Flags = CommandFlag.UsableWhileIgnored | CommandFlag.NonDisableable
 				}
@@ -135,7 +135,7 @@ namespace XenoBot2
 					LongHelpText = "Prints a message in the form \"Make $THING great again!\"\n" +
 								   "If an argument is passed, $THING is replaced with the argument.\"\n" +
 								   "If no arguments are passed, 'bots' is used instead.",
-					Category = CommandCategory.FunOffensive,
+					HelpCategory = "Fun (Offensive)",
 					Definition = Commands.FunOffensive.Trump
 				}
 			},
@@ -143,7 +143,7 @@ namespace XenoBot2
 				"$version", new Command
 				{
 					HelpText = "Prints the bot's current version number.",
-					Category = CommandCategory.Base,
+					HelpCategory = "Core",
 					Definition = Commands.Base.Version
 				}
 			},
@@ -151,14 +151,13 @@ namespace XenoBot2
 				"sudo", new Command
 				{
 					Flags = CommandFlag.Hidden,
-					Category = CommandCategory.Retorts,
 					Definition = Commands.Retorts.Sudo
 				}
 			},
 			{
 				"$user", new Command
 				{
-					Category = CommandCategory.Utility,
+					HelpCategory = "Utility",
 					HelpText = "Gets some information about a user.",
 					Definition = Commands.Utility.UserInfo
 				}
@@ -166,7 +165,7 @@ namespace XenoBot2
 			{
 				"$8", new Command
 				{
-					Category = CommandCategory.Fun,
+					HelpCategory = "Fun",
 					Definition = Commands.Fun.EightBall,
 					HelpText = "Consult the 8 Ball."
 				}
@@ -181,14 +180,14 @@ namespace XenoBot2
 				"ping", new Command
 				{
 					Definition = Commands.Utility.Ping,
-					Category = CommandCategory.Utility,
+					HelpCategory = "Utility",
 					Flags = CommandFlag.Hidden
 				}
 			},
 			{
 				"$avatar", new Command
 				{
-					Category = CommandCategory.Utility,
+					HelpCategory = "Utility",
 					HelpText = "Gets the avatar for the given user",
 					Definition = Commands.Utility.Avatar
 				}
@@ -196,7 +195,7 @@ namespace XenoBot2
 			{
 				"$!debug", new Command
 				{
-					Category = CommandCategory.Administration,
+					HelpCategory = "Core",
 					Permission = PermissionFlag.BotAdministrator,
 					Definition = Commands.Administration.BotDebug,
 					Flags = CommandFlag.NonDisableable | CommandFlag.Hidden,
@@ -206,7 +205,7 @@ namespace XenoBot2
 			{
 				"$ignore", new Command
 				{
-					Category = CommandCategory.Administration,
+					HelpCategory = "Core",
 					Permission = PermissionFlag.Moderator,
 					Definition = Commands.Administration.IgnoreUser,
 					HelpText = "Toggles command ignore for a user."

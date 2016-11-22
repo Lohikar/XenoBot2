@@ -78,7 +78,7 @@ namespace XenoBot2.Commands
 			if (cmd.AliasFor != null)
 				helptext = cmd.ResolveCommand().HelpText;
 			
-			builder.Append($"{cmdname} - {cmd.GetCategoryString()}");
+			builder.Append($"{cmdname} - {cmd.HelpCategory}");
 
 			if (cmd.AliasFor != null)
 				builder.AppendLine($"(Alias For {cmd.AliasFor})");
