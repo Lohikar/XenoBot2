@@ -28,26 +28,6 @@ namespace XenoBot2.Data
 			"I guess."
 		};
 
-		public static readonly IReadOnlyList<string> WelcomeBackMessages = new List<string>
-		{
-			"Welcome Back, {0}.",
-			"wb {0}",
-			"weba {0}"
-		};
-
-		public static readonly IReadOnlyList<string> FrontResponses = new List<string>
-		{
-			"side",
-			"Very funny, {0}.",
-			"Ha.",
-			"up"
-		};
-
-		public static readonly IReadOnlyList<string> HeartResponses = new List<string>
-		{
-			"<2"
-		};
-
 		public static IList<string> Names;
 		public static IList<string> WhatTheCommit;
 
