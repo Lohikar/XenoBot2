@@ -5,12 +5,12 @@ namespace XenoBot2
 {
 	internal class UserDataStore<T>
 	{
-		private readonly Dictionary<Tuple<string, string>, T> _permissionDict;
+		private readonly Dictionary<Tuple<string, string>, T> _data;
 
 		public UserDataStore(T defaultValue)
 		{
 			DefaultValue = defaultValue;
-			_permissionDict = new Dictionary<Tuple<string, string>, T>();
+			_data = new Dictionary<Tuple<string, string>, T>();
 		}
 
 		public T DefaultValue { get; }
@@ -20,15 +20,19 @@ namespace XenoBot2
 			get
 			{
 				var id = MakeId(firstKey, secondKey);
-				return _permissionDict.ContainsKey(id) ? _permissionDict[id] : DefaultValue;
+				return _data.ContainsKey(id) ? _data[id] : DefaultValue;
 			}
 			set
 			{
 				var id = MakeId(firstKey, secondKey);
-				if (!_permissionDict.ContainsKey(id))
-					_permissionDict.Add(id, value);
+				if (!_data.ContainsKey(id))
+					_data.Add(id, value);
 				else
-					_permissionDict[id] = value;
+					_data[id] = value;
+
+				// no point storing values that are default
+				if (EqualityComparer<T>.Default.Equals(value, DefaultValue))
+					_data.Remove(id);
 			}
 		}
 
@@ -37,16 +41,16 @@ namespace XenoBot2
 		public void Add(string firstKey, string secondKey, T value)
 		{
 			var id = MakeId(firstKey, secondKey);
-			if (_permissionDict.ContainsKey(id))
+			if (_data.ContainsKey(id))
 			{
 				throw new ArgumentException("That key already exists!");
 			}
-			_permissionDict.Add(id, value);
+			_data.Add(id, value);
 		}
 
 		public void Remove(string firstKey, string secondKey)
 		{
-			_permissionDict.Remove(MakeId(firstKey, secondKey));
+			_data.Remove(MakeId(firstKey, secondKey));
 		}
 
 		private static Tuple<string, string> MakeId(string memberId, string channelId)
