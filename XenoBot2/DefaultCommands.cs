@@ -84,7 +84,8 @@ namespace XenoBot2
 				{
 					HelpText = "Prints some basic profile info about you.",
 					HelpCategory = "Utility",
-					Definition = Commands.Utility.Me
+					Definition = Commands.Utility.Me,
+					Flags = CommandFlag.UsableWhileIgnored
 				}
 			},
 			{
@@ -116,7 +117,7 @@ namespace XenoBot2
 					Permission = UserFlag.BotAdministrator,
 					HelpCategory = "Administration",
 					Definition = Commands.Administration.HaltBot,
-					Flags = CommandFlag.NonDisableable
+					Flags = CommandFlag.NonDisableable | CommandFlag.UsableWhileIgnored
 				}
 			},
 			{
@@ -194,6 +195,7 @@ namespace XenoBot2
 				{
 					HelpCategory = "Core",
 					Permission = UserFlag.Moderator,
+					Flags = CommandFlag.UsableWhileIgnored,
 					Definition = Commands.Administration.IgnoreUser,
 					HelpText = "Toggles command ignore for a user."
 				}

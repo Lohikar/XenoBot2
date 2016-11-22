@@ -137,13 +137,13 @@ namespace XenoBot2.Commands
 			if (Utilities.Permitted(UserFlag.Ignored, member))
 			{
 				Utilities.WriteLog(member, $"unignored {user.GetFullUsername()}");
-				SharedData.UserFlags[member.ID, "*"] |= UserFlag.Ignored;
+				SharedData.UserFlags[user.ID, "*"] ^= UserFlag.Ignored;
 				client.SendMessageToRoom($"Unignored {user.MakeMention()}.", channel);
 			}
 			else
 			{
 				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()}");
-				SharedData.UserFlags[member.ID, "*"] ^= UserFlag.Ignored;
+				SharedData.UserFlags[user.ID, "*"] |= UserFlag.Ignored;
 				client.SendMessageToRoom($"Ignored {user.MakeMention()}.", channel);
 			}
 		}

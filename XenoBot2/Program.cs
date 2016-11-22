@@ -160,6 +160,8 @@ namespace XenoBot2
 				SendMessageToRoom("That command cannot be used here.", channel);
 				return;
 			}
+			if (!cmd.Item2.Flags.HasFlag(CommandFlag.UsableWhileIgnored) && Utilities.Permitted(UserFlag.Ignored, author))
+				return;
 			try
 			{
 				// execute command

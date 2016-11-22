@@ -26,9 +26,9 @@ namespace XenoBot2
 			{
 				var id = MakeId(firstKey, secondKey);
 				if (!_permissionDict.ContainsKey(id))
-					throw new ArgumentException("Key does not exist.");
-
-				_permissionDict[id] = value;
+					_permissionDict.Add(id, value);
+				else
+					_permissionDict[id] = value;
 			}
 		}
 
