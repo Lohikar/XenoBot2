@@ -90,7 +90,7 @@ namespace XenoBot2
 		/// <returns></returns>
 		internal static string GetCategoryString(this Command meta)
 		{
-			var category = meta.AliasFor == null ? meta.Category : CommandStore.Commands[meta.AliasFor].Category;
+			var category = meta.AliasFor == null ? meta.Category : meta.ResolveCommand().Category;
 			switch (category)
 			{
 				case CommandCategory.Unknown:
@@ -117,7 +117,7 @@ namespace XenoBot2
 		internal static Command ResolveCommand(this Command command)
 			=> command.AliasFor == null ? command : CommandStore.Commands[command.AliasFor];
 
-		internal static string GetMention(this DiscordMember target) => $"<@{target.ID}>";
+		internal static string MakeMention(this DiscordMember target) => $"<@{target.ID}>";
 
 		internal static string GetFullUsername(this DiscordMember target) => $"{target.Username}#{target.Discriminator}";
 

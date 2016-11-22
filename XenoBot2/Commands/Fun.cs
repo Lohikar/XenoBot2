@@ -34,7 +34,7 @@ namespace XenoBot2.Commands
 			Utilities.WriteLog(author, "consulted the 8 ball.");
 			if (info.HasArguments)
 			{
-				client.SendMessageToRoom($"{author.GetMention()} asked: **{string.Join(" ", info.Arguments)}**\n" +
+				client.SendMessageToRoom($"{author.MakeMention()} asked: **{string.Join(" ", info.Arguments)}**\n" +
 				                  $"The 8 Ball says... *{Strings.EightBall.GetRandom()}*", channel);
 			}
 			else

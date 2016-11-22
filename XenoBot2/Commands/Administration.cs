@@ -144,13 +144,13 @@ namespace XenoBot2.Commands
 			{
 				Utilities.WriteLog(member, $"unignored {user.GetFullUsername()}");
 				Ids.Ignored.Remove(user.ID);
-				client.SendMessageToRoom($"Unignored {user.GetMention()}.", channel);
+				client.SendMessageToRoom($"Unignored {user.MakeMention()}.", channel);
 			}
 			else
 			{
 				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()}");
 				Ids.Ignored.Add(user.ID);
-				client.SendMessageToRoom($"Ignored {user.GetMention()}.", channel);
+				client.SendMessageToRoom($"Ignored {user.MakeMention()}.", channel);
 			}
 		}
 	}
