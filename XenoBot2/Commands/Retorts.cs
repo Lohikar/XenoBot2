@@ -11,7 +11,7 @@ namespace XenoBot2.Commands
 		{
 			Utilities.WriteLog(author, "attempted sudo.");
 
-			var fmt = string.Format(author.ID == Ids.Admin 
+			var fmt = string.Format(Utilities.Permitted(Permission.Administrator, author)
 				? Strings.SudoAdminMessages.GetRandom() 
 				: Strings.SudoMessages.GetRandom(), author.MakeMention());
 

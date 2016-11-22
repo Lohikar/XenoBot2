@@ -24,7 +24,8 @@ namespace XenoBot2.Shared
 		/// <summary>
 		///		Invoker must be the bot administrator.
 		/// </summary>
-		BotAdministrator = 8
+		BotAdministrator = 8,
+		BotDebug = 16
 	}
 
 	[Flags]
@@ -67,6 +68,7 @@ namespace XenoBot2.Shared
 		/// <summary>
 		///		The command is hidden from help indexes in this context.
 		/// </summary>
-		Hidden = 2
+		Hidden = 2,
+		DoesNotExist = 4
 	}
 }

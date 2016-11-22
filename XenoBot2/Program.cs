@@ -142,6 +142,8 @@ namespace XenoBot2
 
 			// Process command & execute
 			var cmd = CommandParser.ParseCommand(messageText, channel);
+			if (cmd.Item1.State.HasFlag(CommandState.DoesNotExist))
+				return;
 			if (cmd.Item2 == null)
 			{
 				Utilities.WriteLog(string.Format(Messages.CommandNotDefined, cmd.Item1));

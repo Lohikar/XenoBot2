@@ -15,7 +15,7 @@ namespace XenoBot2.Commands
 	{
 		internal static void HaltBot(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
 		{
-			if (author.ID == Ids.Admin)
+			if (Utilities.Permitted(Permission.BotAdministrator, author))
 			{
 				Utilities.WriteLog(author, "is shutting down the bot; is admin.");
 				client.SendMessageToRoom("Bot shutting down.", channel);
@@ -52,7 +52,7 @@ namespace XenoBot2.Commands
 
 		internal static void BotDebug(DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel)
 		{
-			if (member.ID != Ids.Admin)
+			if (Utilities.Permitted(Permission.BotDebug, member))
 			{
 				Utilities.WriteLog($"WARN: non-admin client '{member.GetFullUsername()}' ran $debug.");
 			}

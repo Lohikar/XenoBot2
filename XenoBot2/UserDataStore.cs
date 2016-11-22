@@ -32,6 +32,8 @@ namespace XenoBot2
 			}
 		}
 
+		public T this[string firstKey] => this[firstKey, "*"];
+
 		public void Add(string firstKey, string secondKey, T value)
 		{
 			var id = MakeId(firstKey, secondKey);

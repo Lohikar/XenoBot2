@@ -31,10 +31,10 @@ namespace XenoBot2.Commands
 		internal static void Me(DiscordClient client, CommandInfo info, DiscordMember origin, DiscordChannelBase channel)
 		{
 			Utilities.WriteLog(origin, "requested info about themselves.");
-			client.SendMessageToRoom(GetInfoString(origin), channel);
+			client.SendMessageToRoom(GetInfoString(origin, channel), channel);
 		}
 
-		private static string GetInfoString(DiscordMember author)
+		private static string GetInfoString(DiscordMember author, DiscordChannelBase channel)
 			=> $"Information about: **{author.Username}#{author.Discriminator}**\n" +
 			   "```\n" +
 			   $"ID:\t{author.ID}\n" +
@@ -44,6 +44,8 @@ namespace XenoBot2.Commands
 			   $"Status:\t{author.Status}\n" +
 			   $"Deaf:\t{author.Deaf}\n" +
 			   $"Avatar:\t{author.GetAvatarURL()}\n" +
+			   $"Permissions (Channel): {SharedData.UserPermissions[author.ID, channel.ID]}\n" +
+			   $"Permissions (Global): {SharedData.UserPermissions[author.ID]}" +
 			   "```";
 
 		internal static void ConvertNumber(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
@@ -117,7 +119,7 @@ namespace XenoBot2.Commands
 				client.SendMessageToRoom("User does not exist.", channel);
 				return;
 			}
-			client.SendMessageToRoom(GetInfoString(author), channel);
+			client.SendMessageToRoom(GetInfoString(author, channel), channel);
 		}
 
 		internal static void Avatar(DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel)

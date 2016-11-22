@@ -29,7 +29,7 @@ namespace XenoBot2.Commands
 				send(Messages.HelpTextHeader);
 				// show list of commands + shorthelp
 
-				var isAdmin = author.ID == Ids.Admin;
+				var isAdmin = Utilities.Permitted(Permission.Administrator, author, channel);
 
 				var giter = 0;
 
