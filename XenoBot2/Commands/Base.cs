@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
+using System.Threading;
 using DiscordSharp;
 using DiscordSharp.Objects;
 using XenoBot2.Data;
@@ -16,22 +18,36 @@ namespace XenoBot2.Commands
 		{
 			if (!info.HasArguments)
 			{
-				var cb = new StringBuilder();
-				cb.AppendLine(Messages.HelpTextHeader);
-				cb.AppendLine("```");
+				Utilities.WriteLog(author, "requested help index.");
+
+				Action<string> send = s =>
+				{
+					client.SendMessageToUser(s, author);
+					Thread.Sleep(100);
+				};
+
+				send(Messages.HelpTextHeader);
 				// show list of commands + shorthelp
 
 				var isAdmin = author.ID == Ids.Admin;
 
+				var giter = 0;
+
 				var helpLines = from item in CommandData.CommandList
-					where isAdmin || !item.Value.Flags.HasFlag(CommandFlag.Hidden)
-					select GenerateHelpEntry(item.Value, item.Key);
+								where isAdmin || !item.Value.Flags.HasFlag(CommandFlag.Hidden)
+								let num = giter++
+								group GenerateHelpEntry(item.Value, item.Key) by num / 10 into items
+								select items;
 
-				cb.Append(string.Join("\n", helpLines));
+				var builder = new StringBuilder();
 
-				cb.AppendLine("```");
-				Utilities.WriteLog(author, "requested help index.");
-				client.SendMessageToUser(cb.ToString(), author);
+				foreach (var i in helpLines)
+				{
+					builder.Clear();
+					i.Aggregate(builder, (b, s) => b.AppendLine(s));
+					send(builder.ToString());
+				}
+
 			}
 			else
 			{
@@ -56,14 +72,26 @@ namespace XenoBot2.Commands
 
 		private static string GenerateHelpEntry(Command cmd, string cmdname)
 		{
+			var builder = new StringBuilder();
+
 			var helptext = cmd.HelpText;
-			if (cmd.AliasFor != null && CommandData.CommandList.ContainsKey(cmd.AliasFor))
+			if (cmd.AliasFor != null)
+				helptext = cmd.ResolveCommand().HelpText;
+			
+			builder.Append($"{cmdname} - {cmd.GetCategoryString()}");
+
+			if (cmd.AliasFor == null)
+				builder.AppendLine($"(Alias For {cmd.AliasFor})");
+
+			builder.AppendLine($"Required Permissions: {cmd.Permission}");
+
+			if (!string.IsNullOrWhiteSpace(helptext))
 			{
-				helptext = CommandData.CommandList[cmd.AliasFor].HelpText;
+				builder.Append(" -> ");
+				builder.AppendLine(helptext);	
 			}
-			var firstline =
-				$"{cmdname} - {cmd.GetCategoryString()}{(cmd.AliasFor != null ? $"(Alias For {cmd.AliasFor})" : "")}\nRequired Permissions: {cmd.Permission}";
-			return string.IsNullOrWhiteSpace(helptext) ? $"{firstline}" : $"{firstline}\n -> {helptext}";
+			
+			return builder.ToString();
 		}
 
 		internal static void Version(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
