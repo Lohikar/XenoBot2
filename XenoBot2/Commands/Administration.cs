@@ -97,7 +97,7 @@ namespace XenoBot2.Commands
 						client.SendMessageToRoom("Error: Command is not defined", channel);
 						return;
 					}
-					var cmddata = CommandData.CommandList[cmd.CommandText].ResolveCommand();
+					var cmddata = CommandStore.Commands[cmd.CommandText].ResolveCommand();
 					client.SendMessageToRoom($"Input: {cmdtxt}\n" +
 					                         "```\n" +
 					                         $"CmdText: {cmd.CommandText}\n" +

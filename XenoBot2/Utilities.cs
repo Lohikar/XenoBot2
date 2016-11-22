@@ -90,7 +90,7 @@ namespace XenoBot2
 		/// <returns></returns>
 		internal static string GetCategoryString(this Command meta)
 		{
-			var category = meta.AliasFor == null ? meta.Category : CommandData.CommandList[meta.AliasFor].Category;
+			var category = meta.AliasFor == null ? meta.Category : CommandStore.Commands[meta.AliasFor].Category;
 			switch (category)
 			{
 				case CommandCategory.Unknown:
@@ -115,7 +115,7 @@ namespace XenoBot2
 		/// <param name="command">The command to resolve the alias for.</param>
 		/// <returns>A resolved alias or the passed <see cref="Command"/> if there was no defined alias.</returns>
 		internal static Command ResolveCommand(this Command command)
-			=> command.AliasFor == null ? command : CommandData.CommandList[command.AliasFor];
+			=> command.AliasFor == null ? command : CommandStore.Commands[command.AliasFor];
 
 		internal static string GetMention(this DiscordMember target) => $"<@{target.ID}>";
 

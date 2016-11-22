@@ -22,6 +22,11 @@ namespace XenoBot2
 		private static void Main(string[] args)
 		{
 			Utilities.WriteLog($"XenoBot2 v{Utilities.GetVersion()} starting initialization...");
+			// Initialize command storage
+			CommandStore.Commands = new CommandStore();
+			// load default commands
+			CommandStore.Commands.AddMany(DefaultCommands.Content);
+
 			// initialize CombinedChannelCommandManager
 			CombinedChannelCommandMgr = new CombinedChannelCommandManager();
 			CombinedChannelCommandMgr.ChannelRegistered += e =>
@@ -149,7 +154,7 @@ namespace XenoBot2
 			if (cmdinfo?.CommandText == null) return;	// command not found
 
 			// Process command & execute
-			var cmd = CommandData.CommandList[cmdinfo.CommandText].ResolveCommand();
+			var cmd = CommandStore.Commands[cmdinfo.CommandText].ResolveCommand();
 			if (cmd?.Definition == null)
 			{
 				Utilities.WriteLog(string.Format(Messages.CommandNotDefined, cmdinfo.CommandText));

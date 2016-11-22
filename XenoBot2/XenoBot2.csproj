@@ -68,7 +68,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CombinedChannelCommandManager.cs" />
-    <Compile Include="CommandData.cs" />
+    <Compile Include="DefaultCommands.cs" />
+    <Compile Include="CommandStore.cs" />
     <Compile Include="Commands\Administration.cs" />
     <Compile Include="Commands\Base.cs" />
     <Compile Include="Commands\Fun.cs" />

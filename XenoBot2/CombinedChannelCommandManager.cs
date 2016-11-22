@@ -31,7 +31,7 @@ namespace XenoBot2
 
 		private bool SetCommandEnableState(string command, DiscordChannelBase targetChannel, bool state)
 		{
-			if (!CommandData.CommandList.ContainsKey(command))
+			if (!CommandStore.Commands.Contains(command))
 			{
 				// command does not exist
 				throw new InvalidCommandException(command);
@@ -60,7 +60,7 @@ namespace XenoBot2
 		/// <returns>True if the command is registered, false otherwise.</returns>
 		private bool RegisterCommand(string command, DiscordChannelBase channel)
 		{
-			if (!CommandData.CommandList.ContainsKey(command))
+			if (!CommandStore.Commands.Contains(command))
 			{
 				// attempted to register an undefined command
 				Utilities.WriteLog($"WARN: Attempted to register invalid command '{command}' on channel '{channel.GetName()}'!");
@@ -89,7 +89,7 @@ namespace XenoBot2
 			var lineparts = commandline.Split(' ');
 
 			// Register command
-			if (CommandData.CommandList.Keys.Contains(lineparts[0]))
+			if (CommandStore.Commands.Contains(lineparts[0]))
 				RegisterCommand(lineparts[0], channelContext);
 
 			if (!_commands.ContainsKey(channelContext.ID) || !_commands[channelContext.ID].ContainsKey(lineparts[0]))
@@ -110,7 +110,7 @@ namespace XenoBot2
 
 			//var cmdinfo = Command.CommandList[commandData.CommandText];
 
-			if (CommandData.CommandList[commandData.CommandText].Disabled)
+			if (CommandStore.Commands[commandData.CommandText].Disabled)
 			{
 				commandData.Status = CommandStatus.AdminDisabled;
 			}

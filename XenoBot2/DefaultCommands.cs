@@ -3,9 +3,9 @@ using XenoBot2.Shared;
 
 namespace XenoBot2
 {
-	static class CommandData
+	internal static class DefaultCommands
 	{
-		public static IDictionary<string, Command> CommandList = new Dictionary<string, Command>
+		public static readonly IDictionary<string, Command> Content = new Dictionary<string, Command>
 		{
 			{
 				"$wtc", new Command
