@@ -12,7 +12,7 @@ namespace XenoBot2
 	{
 		public static CommandStore Commands;
 
-		private IDictionary<string, Command> _commands;
+		private readonly IDictionary<string, Command> _commands;
 
 		public Command this[string id] => _commands[id.ToLower()];
 
@@ -22,6 +22,11 @@ namespace XenoBot2
 		public void Add(string id, Command cmd) => _commands.Add(id, cmd);
 
 		public bool Contains(string id) => _commands.ContainsKey(id.ToLower());
+
+		public CommandStore()
+		{
+			_commands = new Dictionary<string, Command>();
+		}
 
 		public IEnumerator<KeyValuePair<string, Command>> GetEnumerator()
 		{
