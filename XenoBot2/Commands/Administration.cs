@@ -15,7 +15,7 @@ namespace XenoBot2.Commands
 	{
 		internal static void HaltBot(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
 		{
-			if (Utilities.Permitted(Permission.BotAdministrator, author))
+			if (Utilities.Permitted(UserFlag.BotAdministrator, author))
 			{
 				Utilities.WriteLog(author, "is shutting down the bot; is admin.");
 				client.SendMessageToRoom("Bot shutting down.", channel);
@@ -52,7 +52,7 @@ namespace XenoBot2.Commands
 
 		internal static void BotDebug(DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel)
 		{
-			if (Utilities.Permitted(Permission.BotDebug, member))
+			if (Utilities.Permitted(UserFlag.BotDebug, member))
 			{
 				Utilities.WriteLog($"WARN: non-admin client '{member.GetFullUsername()}' ran $debug.");
 			}
@@ -134,16 +134,16 @@ namespace XenoBot2.Commands
 
 			var user = info.Arguments.First().GetMemberFromMention(client, channel);
 
-			if (Ids.Ignored.Contains(user.ID))
+			if (Utilities.Permitted(UserFlag.Ignored, member))
 			{
 				Utilities.WriteLog(member, $"unignored {user.GetFullUsername()}");
-				Ids.Ignored.Remove(user.ID);
+				SharedData.UserFlags[member.ID, "*"] |= UserFlag.Ignored;
 				client.SendMessageToRoom($"Unignored {user.MakeMention()}.", channel);
 			}
 			else
 			{
 				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()}");
-				Ids.Ignored.Add(user.ID);
+				SharedData.UserFlags[member.ID, "*"] ^= UserFlag.Ignored;
 				client.SendMessageToRoom($"Ignored {user.MakeMention()}.", channel);
 			}
 		}

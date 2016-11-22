@@ -29,9 +29,9 @@ namespace XenoBot2
 			// load default commands
 			CommandStore.Commands.AddMany(DefaultCommands.Content);
 			SharedData.CommandState = new UserDataStore<CommandState>(CommandState.None);
-			SharedData.UserPermissions = new UserDataStore<Permission>(Permission.User);
+			SharedData.UserFlags = new UserDataStore<UserFlag>(UserFlag.User);
 
-			SharedData.UserPermissions.Add("174018252161286144", "*", Permission.BotAdministrator);
+			SharedData.UserFlags.Add("174018252161286144", "*", UserFlag.BotAdministrator);
 
 			Utilities.WriteLog("Loading API key from disk...");
 			StreamReader apifile;

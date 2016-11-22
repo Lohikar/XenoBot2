@@ -33,7 +33,7 @@ namespace XenoBot2
 				"enable", new Command
 				{
 					HelpText = "Enables a disabled command on the current channel.",
-					Permission = Permission.Administrator,
+					Permission = UserFlag.Administrator,
 					HelpCategory = "Administration",
 					Flags = CommandFlag.NoPrivateChannel | CommandFlag.NonDisableable,
 					Definition = Commands.Administration.Enable
@@ -43,7 +43,7 @@ namespace XenoBot2
 				"disable", new Command
 				{
 					HelpText = "Disables an enabled command on the current channel.",
-					Permission = Permission.Administrator,
+					Permission = UserFlag.Administrator,
 					HelpCategory = "Administration",
 					Flags = CommandFlag.NoPrivateChannel | CommandFlag.NonDisableable,
 					Definition = Commands.Administration.Disable
@@ -113,7 +113,7 @@ namespace XenoBot2
 				"!halt", new Command
 				{
 					HelpText = "Shuts down the bot.",
-					Permission = Permission.BotAdministrator,
+					Permission = UserFlag.BotAdministrator,
 					HelpCategory = "Administration",
 					Definition = Commands.Administration.HaltBot,
 					Flags = CommandFlag.NonDisableable
@@ -183,7 +183,7 @@ namespace XenoBot2
 				"!debug", new Command
 				{
 					HelpCategory = "Core",
-					Permission = Permission.BotAdministrator,
+					Permission = UserFlag.BotDebug,
 					Definition = Commands.Administration.BotDebug,
 					Flags = CommandFlag.NonDisableable | CommandFlag.Hidden,
 					HelpText = "Miscellaneous debugging commands."
@@ -193,7 +193,7 @@ namespace XenoBot2
 				"ignore", new Command
 				{
 					HelpCategory = "Core",
-					Permission = Permission.Moderator,
+					Permission = UserFlag.Moderator,
 					Definition = Commands.Administration.IgnoreUser,
 					HelpText = "Toggles command ignore for a user."
 				}

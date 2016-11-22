@@ -179,7 +179,7 @@ namespace XenoBot2
 		internal static DiscordMember GetMemberFromMention(this string src, DiscordClient client, DiscordChannelBase channel)
 			=> client.GetMemberFromChannel(channel, src.Replace("<@!", "").Replace("<@", "").Replace(">", ""));
 
-		internal static bool Permitted(Permission flag, DiscordMember member, DiscordChannelBase channel = null)
-			=> (SharedData.UserPermissions[member.ID, channel?.ID ?? "*"] & flag) == flag;
+		internal static bool Permitted(UserFlag flag, DiscordMember member, DiscordChannelBase channel = null)
+			=> (SharedData.UserFlags[member.ID, channel?.ID ?? "*"] & flag) == flag;
 	}
 }

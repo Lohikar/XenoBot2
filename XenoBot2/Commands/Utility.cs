@@ -44,8 +44,8 @@ namespace XenoBot2.Commands
 			   $"Status:\t{author.Status}\n" +
 			   $"Deaf:\t{author.Deaf}\n" +
 			   $"Avatar:\t{author.GetAvatarURL()}\n" +
-			   $"Permissions (Channel): {SharedData.UserPermissions[author.ID, channel.ID]}\n" +
-			   $"Permissions (Global): {SharedData.UserPermissions[author.ID]}" +
+			   $"Permissions (Channel): {SharedData.UserFlags[author.ID, channel.ID]}\n" +
+			   $"Permissions (Global): {SharedData.UserFlags[author.ID]}" +
 			   "```";
 
 		internal static void ConvertNumber(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)

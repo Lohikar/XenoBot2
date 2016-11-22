@@ -3,29 +3,30 @@
 namespace XenoBot2.Shared
 {
 	[Flags]
-	public enum Permission
+	public enum UserFlag
 	{
 		/// <summary>
 		///		No permissions required.
 		/// </summary>
 		None = 0,
+		Ignored = 1,
 		/// <summary>
 		///		Invoker must be able to speak in the affected channel.
 		/// </summary>
-		User = 1,
+		User = 2,
 		/// <summary>
 		///		Invoker must be a moderator for the affected channel.
 		/// </summary>
-		Moderator = 2,
+		Moderator = 4,
 		/// <summary>
 		///		Invoker must be an administrator for the server of the affected channel.
 		/// </summary>
-		Administrator = 4,
+		Administrator = 8,
 		/// <summary>
 		///		Invoker must be the bot administrator.
 		/// </summary>
-		BotAdministrator = 8,
-		BotDebug = 16
+		BotAdministrator = 16,
+		BotDebug = 32
 	}
 
 	[Flags]

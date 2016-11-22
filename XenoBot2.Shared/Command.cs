@@ -29,14 +29,9 @@ namespace XenoBot2.Shared
 		public string AliasFor = null;
 
 		/// <summary>
-		///		Defines if a command should be marked as AdminDisabled.
-		/// </summary>
-		public bool Disabled = false;
-
-		/// <summary>
 		///		The permissions required to use this command.
 		/// </summary>
-		public Permission Permission { get; set; } = Permission.User;
+		public UserFlag Permission { get; set; } = UserFlag.User;
 
 		public CommandFlag Flags { get; set; } = CommandFlag.None;
 		/// <summary>

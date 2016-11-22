@@ -78,7 +78,6 @@
     <Compile Include="Commands\FunOffensive.cs" />
     <Compile Include="Commands\Utility.cs" />
     <Compile Include="Data\CommandData.cs" />
-    <Compile Include="Data\Ids.cs" />
     <Compile Include="Data\Messages.cs" />
     <Compile Include="InvalidCommandException.cs" />
     <Compile Include="NonBlockingConsole.cs" />
