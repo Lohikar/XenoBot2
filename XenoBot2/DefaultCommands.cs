@@ -129,15 +129,6 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$penis", new Command
-				{
-					Flags = CommandFlag.Hidden,
-					Category = CommandCategory.FunOffensive,
-					Definition = Commands.FunOffensive.Penis,
-					HelpText = "Prints an arbitrary length ASCII penis."
-				}
-			},
-			{
 				"$trump", new Command
 				{
 					HelpText = "MAKE HELP GREAT AGAIN!",
@@ -165,13 +156,6 @@ namespace XenoBot2
 				}
 			},
 			{
-				"back", new Command
-				{
-					Category = CommandCategory.Retorts,
-					Definition = Commands.Retorts.WelcomeBack
-				}
-			},
-			{
 				"$user", new Command
 				{
 					Category = CommandCategory.Utility,
@@ -180,31 +164,11 @@ namespace XenoBot2
 				}
 			},
 			{
-				"front", new Command
-				{
-					Category = CommandCategory.Retorts,
-					Definition = Commands.Retorts.Front
-				}
-			},
-			{
-				"<3", new Command
-				{
-					Category = CommandCategory.Retorts,
-					Definition = Commands.Retorts.Heart
-				}
-			},
-			{
 				"$8", new Command
 				{
 					Category = CommandCategory.Fun,
 					Definition = Commands.Fun.EightBall,
 					HelpText = "Consult the 8 Ball."
-				}
-			},
-			{
-				"Back", new Command
-				{
-					AliasFor = "back"
 				}
 			},
 			{
@@ -222,25 +186,11 @@ namespace XenoBot2
 				}
 			},
 			{
-				".", new Command
-				{
-					AliasFor = "ping"
-				}
-			},
-			{
 				"$avatar", new Command
 				{
 					Category = CommandCategory.Utility,
 					HelpText = "Gets the avatar for the given user",
 					Definition = Commands.Utility.Avatar
-				}
-			},
-			{
-				"$m", new Command
-				{
-					Category = CommandCategory.Fun,
-					HelpText = "Fetches a meme from lohikar.io.",
-					Definition = Commands.Fun.PrefixMeme
 				}
 			},
 			{

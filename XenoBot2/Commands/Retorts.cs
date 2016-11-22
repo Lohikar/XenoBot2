@@ -17,23 +17,5 @@ namespace XenoBot2.Commands
 
 			client.SendMessageToRoom(fmt, channel);
 		}
-
-		internal static void WelcomeBack(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
-		{
-			Utilities.WriteLog(author, "has been welcomed back.");
-			client.SendMessageToRoom(string.Format(Strings.WelcomeBackMessages.GetRandom(), author.MakeMention()), channel);
-		}
-
-		internal static void Front(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
-		{
-			Utilities.WriteLog(author, "thinks they're funny. (front)");
-			client.SendMessageToRoom(string.Format(Strings.FrontResponses.GetRandom(), author.MakeMention()), channel);
-		}
-
-		internal static void Heart(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
-		{
-			Utilities.WriteLog(author, "said heart.");
-			client.SendMessageToRoom(Strings.HeartResponses.GetRandom(), channel);
-		}
 	}
 }
