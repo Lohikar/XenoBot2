@@ -77,9 +77,6 @@
     <Compile Include="Commands\FunOffensive.cs" />
     <Compile Include="Commands\Retorts.cs" />
     <Compile Include="Commands\Utility.cs" />
-    <Compile Include="DataManagement\ChannelManager.cs" />
-    <Compile Include="DataManagement\CommandManager.cs" />
-    <Compile Include="DataManagement\UserManager.cs" />
     <Compile Include="Data\CommandData.cs" />
     <Compile Include="Data\Ids.cs" />
     <Compile Include="Data\Messages.cs" />
@@ -94,6 +91,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
