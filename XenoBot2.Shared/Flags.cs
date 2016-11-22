@@ -3,7 +3,7 @@
 namespace XenoBot2.Shared
 {
 	[Flags]
-	public enum PermissionFlag
+	public enum Permission
 	{
 		/// <summary>
 		///		No permissions required.
@@ -54,7 +54,7 @@ namespace XenoBot2.Shared
 	}
 
 	[Flags]
-	public enum CommandStateFlag
+	public enum CommandState
 	{
 		/// <summary>
 		///		No special state is set.

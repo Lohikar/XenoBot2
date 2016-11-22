@@ -8,5 +8,6 @@ namespace XenoBot2.Shared
 		public string CommandText { get; set; }
 		public IList<string> Arguments { get; set; }
 		public bool HasArguments => Arguments.Any();
+		public CommandState State { get; set; }
 	}
 }

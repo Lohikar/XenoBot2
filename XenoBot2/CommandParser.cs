@@ -22,7 +22,8 @@ namespace XenoBot2
 			cmdinfo.Arguments = chunks.AtLeast(2) ? chunks.Skip(1).ToList() : new List<string>();
 
 			var state = SharedData.CommandState[cmd, channelContext.ID];
-			if (state.HasFlag(CommandStateFlag.Disabled))
+			cmdinfo.State = state;
+			if (state.HasFlag(CommandState.Disabled))
 				return new Tuple<CommandInfo, Command>(cmdinfo, null);
 
 			return new Tuple<CommandInfo, Command>(cmdinfo, CommandStore.Commands[cmd].ResolveCommand());

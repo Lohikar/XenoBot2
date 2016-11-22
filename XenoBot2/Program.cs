@@ -26,8 +26,10 @@ namespace XenoBot2
 			CommandStore.Commands = new CommandStore();
 			// load default commands
 			CommandStore.Commands.AddMany(DefaultCommands.Content);
-			SharedData.CommandState = new UserDataStore<CommandStateFlag>(CommandStateFlag.None);
-			SharedData.UserPermissions = new UserDataStore<PermissionFlag>(PermissionFlag.User);
+			SharedData.CommandState = new UserDataStore<CommandState>(CommandState.None);
+			SharedData.UserPermissions = new UserDataStore<Permission>(Permission.User);
+
+			SharedData.UserPermissions.Add("174018252161286144", "*", Permission.BotAdministrator);
 
 			Utilities.WriteLog("Loading API key from disk...");
 			StreamReader apifile;
@@ -170,30 +172,11 @@ namespace XenoBot2
 			}
 		}
 
-		private static bool CheckMemberIgnore(DiscordMember member) => member == _client.Me || member.IsBot || Ids.Ignored.Contains(member.ID);
+		private static bool CheckMemberIgnore(DiscordMember member)
+		{
+			return member == _client.Me || member.IsBot;
+		}
 
 		private static void SendMessageToRoom(string data, DiscordChannelBase channel) => _client.SendMessageToRoom(data, channel);
-
-		//private static CommandInfo GetInfo(string messageText, DiscordChannelBase channel, DiscordMember originMember)
-		//{
-		//	var cmd = CombinedChannelCommandMgr.ParseCommand(messageText.Trim(), channel);
-
-		//	switch (cmd.Status)
-		//	{
-		//		case CommandStatus.RateLimited:
-		//			Utilities.WriteLog(originMember, $"tried to use rate-limited command '{cmd.CommandText}'");
-		//			return null;
-
-		//		case CommandStatus.Disabled:
-		//			Utilities.WriteLog(originMember, $"tried to use disabled command '{cmd.CommandText}'");
-		//			return null;
-		//		case CommandStatus.AdminDisabled:
-		//			Utilities.WriteLog(originMember, $"tried to use admin-disabled command '{cmd.CommandText}'");
-		//			return null;
-
-		//		default:
-		//			return cmd;
-		//	}
-		//}
 	}
 }

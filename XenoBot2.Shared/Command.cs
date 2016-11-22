@@ -36,7 +36,7 @@ namespace XenoBot2.Shared
 		/// <summary>
 		///		The permissions required to use this command.
 		/// </summary>
-		public PermissionFlag Permission { get; set; } = PermissionFlag.User;
+		public Permission Permission { get; set; } = Permission.User;
 
 		public CommandFlag Flags { get; set; } = CommandFlag.None;
 		/// <summary>
