@@ -4,6 +4,7 @@ using DiscordSharp;
 using DiscordSharp.Objects;
 using Humanizer;
 using XenoBot2.Data;
+using XenoBot2.Shared;
 
 namespace XenoBot2.Commands
 {
@@ -96,7 +97,7 @@ namespace XenoBot2.Commands
 						client.SendMessageToRoom("Error: Command is not defined", channel);
 						return;
 					}
-					var cmddata = Command.CommandList[cmd.CommandText].ResolveCommand();
+					var cmddata = CommandData.CommandList[cmd.CommandText].ResolveCommand();
 					client.SendMessageToRoom($"Input: {cmdtxt}\n" +
 					                         "```\n" +
 					                         $"CmdText: {cmd.CommandText}\n" +

@@ -4,6 +4,7 @@ using DiscordSharp;
 using DiscordSharp.Objects;
 using Humanizer;
 using XenoBot2.Data;
+using XenoBot2.Shared;
 
 namespace XenoBot2.Commands
 {

@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using DiscordSharp.Objects;
 
-namespace XenoBot2
+namespace XenoBot2.Shared
 {
 	public struct CommandMetadata
 	{
@@ -13,7 +13,7 @@ namespace XenoBot2
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
-			return obj is CommandMetadata && Equals((CommandMetadata) obj);
+			return obj is CommandMetadata && Equals((CommandMetadata)obj);
 		}
 
 		public override int GetHashCode()
@@ -41,7 +41,7 @@ namespace XenoBot2
 		public CommandStatus GetStatus()
 		{
 			if (IsEnabled &&
-			    (MinimumTimeBetweenInvokes == TimeSpan.Zero || DateTime.Now - LastUseTime > MinimumTimeBetweenInvokes))
+				(MinimumTimeBetweenInvokes == TimeSpan.Zero || DateTime.Now - LastUseTime > MinimumTimeBetweenInvokes))
 			{
 				return CommandStatus.Allowed;
 			}

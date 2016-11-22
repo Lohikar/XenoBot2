@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using DiscordSharp;
 using DiscordSharp.Objects;
 using Humanizer;
 
-namespace XenoBot2
+namespace XenoBot2.Shared
 {
 	public enum CommandCategory
 	{
@@ -36,7 +36,7 @@ namespace XenoBot2
 		///		Offensive fun commands.
 		/// </summary>
 		FunOffensive,
-		
+
 		/// <summary>
 		///		Fun messages in response to user chatter. 
 		/// </summary>
@@ -46,7 +46,7 @@ namespace XenoBot2
 	/// <summary>
 	///		Describes information about a command, such as help strings and permissions.
 	/// </summary>
-	internal partial class Command
+	public class Command
 	{
 		/// <summary>
 		///		The short string that should be displayed in the help index.
@@ -85,6 +85,6 @@ namespace XenoBot2
 		public RunnableCommand Definition;
 	}
 
-	internal delegate void RunnableCommand(
+	public delegate void RunnableCommand(
 		DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel);
 }

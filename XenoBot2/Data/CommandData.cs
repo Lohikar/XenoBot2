@@ -5,7 +5,7 @@ namespace XenoBot2.Data
 	/// <summary>
 	///		Strings & other data used by commands.
 	/// </summary>
-	internal static class CommandData
+	internal static class Strings
 	{
 		public static readonly IReadOnlyList<string> SudoMessages = new List<string>
 		{

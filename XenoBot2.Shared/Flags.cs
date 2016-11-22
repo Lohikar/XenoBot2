@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XenoBot2
+namespace XenoBot2.Shared
 {
 	[Flags]
 	public enum PermissionFlag

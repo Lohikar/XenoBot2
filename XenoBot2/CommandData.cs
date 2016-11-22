@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
+using XenoBot2.Shared;
 
 namespace XenoBot2
 {
-	internal partial class Command
+	static class CommandData
 	{
-		/// <summary>
-		///     Defines all commands understood by the bot, as well as all associated metadata.
-		/// </summary>
-		public static readonly IReadOnlyDictionary<string, Command> CommandList = new Dictionary<string, Command>
+		public static IDictionary<string, Command> CommandList = new Dictionary<string, Command>
 		{
 			{
 				"$wtc", new Command
@@ -191,7 +189,7 @@ namespace XenoBot2
 			{
 				"<3", new Command
 				{
-					Category = CommandCategory.Retorts, 
+					Category = CommandCategory.Retorts,
 					Definition = Commands.Retorts.Heart
 				}
 			},
@@ -265,11 +263,5 @@ namespace XenoBot2
 				}
 			}
 		};
-
-		internal static readonly IReadOnlyList<CommandCategory> HiddenCategories = new List<CommandCategory>
-		{
-			CommandCategory.Retorts,
-			CommandCategory.Unknown
-		}; 
 	}
 }

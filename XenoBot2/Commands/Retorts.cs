@@ -1,6 +1,7 @@
 ﻿using DiscordSharp;
 using DiscordSharp.Objects;
 using XenoBot2.Data;
+using XenoBot2.Shared;
 
 namespace XenoBot2.Commands
 {
@@ -11,8 +12,8 @@ namespace XenoBot2.Commands
 			Utilities.WriteLog(author, "attempted sudo.");
 
 			var fmt = string.Format(author.ID == Ids.Admin 
-				? CommandData.SudoAdminMessages.GetRandom() 
-				: CommandData.SudoMessages.GetRandom(), author.GetMention());
+				? Strings.SudoAdminMessages.GetRandom() 
+				: Strings.SudoMessages.GetRandom(), author.GetMention());
 
 			client.SendMessageToRoom(fmt, channel);
 		}
@@ -20,19 +21,19 @@ namespace XenoBot2.Commands
 		internal static void WelcomeBack(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
 		{
 			Utilities.WriteLog(author, "has been welcomed back.");
-			client.SendMessageToRoom(string.Format(CommandData.WelcomeBackMessages.GetRandom(), author.GetMention()), channel);
+			client.SendMessageToRoom(string.Format(Strings.WelcomeBackMessages.GetRandom(), author.GetMention()), channel);
 		}
 
 		internal static void Front(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
 		{
 			Utilities.WriteLog(author, "thinks they're funny. (front)");
-			client.SendMessageToRoom(string.Format(CommandData.FrontResponses.GetRandom(), author.GetMention()), channel);
+			client.SendMessageToRoom(string.Format(Strings.FrontResponses.GetRandom(), author.GetMention()), channel);
 		}
 
 		internal static void Heart(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
 		{
 			Utilities.WriteLog(author, "said heart.");
-			client.SendMessageToRoom(CommandData.HeartResponses.GetRandom(), channel);
+			client.SendMessageToRoom(Strings.HeartResponses.GetRandom(), channel);
 		}
 	}
 }

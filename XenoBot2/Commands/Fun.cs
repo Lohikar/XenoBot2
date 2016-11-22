@@ -2,6 +2,7 @@
 using DiscordSharp;
 using DiscordSharp.Objects;
 using XenoBot2.Data;
+using XenoBot2.Shared;
 
 namespace XenoBot2.Commands
 {
@@ -15,9 +16,9 @@ namespace XenoBot2.Commands
 				_rnd = new Random();
 
 			Utilities.WriteLog(author, "requested a WhatTheCommit message.");
-			var msg = CommandData.WhatTheCommit.GetRandom().Trim()
-				.Replace("XNAMEX", CommandData.Names.GetRandom())
-				.Replace("XUPPERNAMEX", CommandData.Names.GetRandom().ToUpper())
+			var msg = Strings.WhatTheCommit.GetRandom().Trim()
+				.Replace("XNAMEX", Strings.Names.GetRandom())
+				.Replace("XUPPERNAMEX", Strings.Names.GetRandom().ToUpper())
 				.Replace("XNUMX", _rnd.Next(9000).ToString());
 			client.SendMessageToRoom($"*{msg}*", channel);
 		}
@@ -34,11 +35,11 @@ namespace XenoBot2.Commands
 			if (info.HasArguments)
 			{
 				client.SendMessageToRoom($"{author.GetMention()} asked: **{string.Join(" ", info.Arguments)}**\n" +
-				                  $"The 8 Ball says... *{CommandData.EightBall.GetRandom()}*", channel);
+				                  $"The 8 Ball says... *{Strings.EightBall.GetRandom()}*", channel);
 			}
 			else
 			{
-				client.SendMessageToRoom($"*{CommandData.EightBall.GetRandom()}*", channel);
+				client.SendMessageToRoom($"*{Strings.EightBall.GetRandom()}*", channel);
 			}
 			
 		}

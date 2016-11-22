@@ -3,6 +3,7 @@ using System.Text;
 using DiscordSharp;
 using DiscordSharp.Objects;
 using XenoBot2.Data;
+using XenoBot2.Shared;
 
 namespace XenoBot2.Commands
 {
@@ -22,8 +23,8 @@ namespace XenoBot2.Commands
 
 				var isAdmin = author.ID == Ids.Admin;
 
-				var helpLines = from item in Command.CommandList
-					where isAdmin || !item.Value.Flags.HasFlag(CommandFlag.Hidden) && !Command.HiddenCategories.Contains(item.Value.Category)
+				var helpLines = from item in CommandData.CommandList
+					where isAdmin || !item.Value.Flags.HasFlag(CommandFlag.Hidden)
 					select GenerateHelpEntry(item.Value, item.Key);
 
 				cb.Append(string.Join("\n", helpLines));
@@ -34,8 +35,8 @@ namespace XenoBot2.Commands
 			}
 			else
 			{
-				if (!Command.CommandList.ContainsKey(info.Arguments[0])) return;
-				var cmdmeta = Command.CommandList[info.Arguments[0]].ResolveCommand();
+				if (!CommandData.CommandList.ContainsKey(info.Arguments[0])) return;
+				var cmdmeta = CommandData.CommandList[info.Arguments[0]].ResolveCommand();
 				if (string.IsNullOrEmpty(cmdmeta.LongHelpText))
 				{
 					Utilities.WriteLog(author, $"requested non-existent help page '{info.Arguments[0]}'");
@@ -56,9 +57,9 @@ namespace XenoBot2.Commands
 		private static string GenerateHelpEntry(Command cmd, string cmdname)
 		{
 			var helptext = cmd.HelpText;
-			if (cmd.AliasFor != null && Command.CommandList.ContainsKey(cmd.AliasFor))
+			if (cmd.AliasFor != null && CommandData.CommandList.ContainsKey(cmd.AliasFor))
 			{
-				helptext = Command.CommandList[cmd.AliasFor].HelpText;
+				helptext = CommandData.CommandList[cmd.AliasFor].HelpText;
 			}
 			var firstline =
 				$"{cmdname} - {cmd.GetCategoryString()}{(cmd.AliasFor != null ? $"(Alias For {cmd.AliasFor})" : "")}\nRequired Permissions: {cmd.Permission}";

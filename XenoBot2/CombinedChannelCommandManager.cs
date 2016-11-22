@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DiscordSharp.Objects;
+using XenoBot2.Shared;
 
 namespace XenoBot2
 {
@@ -30,7 +31,7 @@ namespace XenoBot2
 
 		private bool SetCommandEnableState(string command, DiscordChannelBase targetChannel, bool state)
 		{
-			if (!Command.CommandList.ContainsKey(command))
+			if (!CommandData.CommandList.ContainsKey(command))
 			{
 				// command does not exist
 				throw new InvalidCommandException(command);
@@ -59,7 +60,7 @@ namespace XenoBot2
 		/// <returns>True if the command is registered, false otherwise.</returns>
 		private bool RegisterCommand(string command, DiscordChannelBase channel)
 		{
-			if (!Command.CommandList.ContainsKey(command))
+			if (!CommandData.CommandList.ContainsKey(command))
 			{
 				// attempted to register an undefined command
 				Utilities.WriteLog($"WARN: Attempted to register invalid command '{command}' on channel '{channel.GetName()}'!");
@@ -88,7 +89,7 @@ namespace XenoBot2
 			var lineparts = commandline.Split(' ');
 
 			// Register command
-			if (Command.CommandList.Keys.Contains(lineparts[0]))
+			if (CommandData.CommandList.Keys.Contains(lineparts[0]))
 				RegisterCommand(lineparts[0], channelContext);
 
 			if (!_commands.ContainsKey(channelContext.ID) || !_commands[channelContext.ID].ContainsKey(lineparts[0]))
@@ -109,7 +110,7 @@ namespace XenoBot2
 
 			//var cmdinfo = Command.CommandList[commandData.CommandText];
 
-			if (Command.CommandList[commandData.CommandText].Disabled)
+			if (CommandData.CommandList[commandData.CommandText].Disabled)
 			{
 				commandData.Status = CommandStatus.AdminDisabled;
 			}
@@ -126,42 +127,5 @@ namespace XenoBot2
 
 			return commandData;
 		}
-	}
-
-	public enum CommandStatus
-	{
-		/// <summary>
-		///     Something went wrong and the status of the command is not known.
-		/// </summary>
-		Unknown,
-
-		/// <summary>
-		///     Command exists and can be used in this context.
-		/// </summary>
-		Allowed,
-
-		/// <summary>
-		///     Command exists, but cannot be used in this context.
-		/// </summary>
-		Disabled,
-
-		/// <summary>
-		///     Command exists and can be used in this context, but has been disabled temporarily due to over-use.
-		/// </summary>
-		RateLimited,
-
-		/// <summary>
-		///     Command exists, but has been turned off by bot administrator.
-		/// </summary>
-		AdminDisabled
-	}
-
-	internal class CommandInfo
-	{
-		public string CommandText { get; set; }
-		public IList<string> Arguments { get; set; }
-		public CommandStatus Status { get; set; }
-		public CommandMetadata Meta { get; set; }
-		public bool HasArguments => Arguments.Any();
 	}
 }

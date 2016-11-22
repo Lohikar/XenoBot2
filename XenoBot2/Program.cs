@@ -6,6 +6,7 @@ using DiscordSharp.Events;
 using DiscordSharp.Objects;
 using Humanizer;
 using XenoBot2.Data;
+using XenoBot2.Shared;
 
 namespace XenoBot2
 {
@@ -86,9 +87,9 @@ namespace XenoBot2
 			// TODO: Cache wtc info instead of re-downloading each time
 			var wtc =
 				Utilities.GetStringFromWebService("https://www.lohikar.io/assets/xenobot/commits.txt");
-			CommandData.WhatTheCommit = wtc.Split('\n');
+			Strings.WhatTheCommit = wtc.Split('\n');
 
-			CommandData.Names = Utilities.GetStringFromWebService("https://www.lohikar.io/assets/xenobot/names.txt").Split('\n');
+			Strings.Names = Utilities.GetStringFromWebService("https://www.lohikar.io/assets/xenobot/names.txt").Split('\n');
 
 			Utilities.WriteLog("Done.");
 
@@ -148,7 +149,7 @@ namespace XenoBot2
 			if (cmdinfo?.CommandText == null) return;	// command not found
 
 			// Process command & execute
-			var cmd = Command.CommandList[cmdinfo.CommandText].ResolveCommand();
+			var cmd = CommandData.CommandList[cmdinfo.CommandText].ResolveCommand();
 			if (cmd?.Definition == null)
 			{
 				Utilities.WriteLog(string.Format(Messages.CommandNotDefined, cmdinfo.CommandText));
