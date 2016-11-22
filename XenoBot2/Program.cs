@@ -17,6 +17,8 @@ namespace XenoBot2
 		private static bool _exit;
 		private static Thread _clientThread;
 
+		public const char Prefix = '$';
+
 		internal static void Exit() => _exit = true;
 
 		private static void Main(string[] args)
@@ -136,12 +138,14 @@ namespace XenoBot2
 		private static void ParseMessage(DiscordMember author, DiscordChannelBase channel, string messageText)
 		{
 			// silently ignore our own messages & messages from other bots
-			if (CheckMemberIgnore(author)) return;
+			if (CheckMemberIgnore(author) ||
+				string.IsNullOrWhiteSpace(messageText) ||
+				messageText[0] != Prefix) return;
 
-			if (string.IsNullOrWhiteSpace(messageText)) return;
+			var text = messageText.Substring(1);
 
 			// Process command & execute
-			var cmd = CommandParser.ParseCommand(messageText, channel);
+			var cmd = CommandParser.ParseCommand(text, channel);
 			if (cmd.Item1.State.HasFlag(CommandState.DoesNotExist))
 				return;
 			if (cmd.Item2 == null)

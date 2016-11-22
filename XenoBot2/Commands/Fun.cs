@@ -43,18 +43,5 @@ namespace XenoBot2.Commands
 			}
 			
 		}
-
-		internal static void PrefixMeme(DiscordClient client, CommandInfo info, DiscordMember author,
-			DiscordChannelBase channel)
-		{
-			if (!info.HasArguments)
-			{
-				client.SendMessageToRoom("Not enough arguments.", channel);
-				Utilities.WriteLog(author, "tried to get a meme, but forgot to specify which one.");
-				return;
-			}
-			Utilities.WriteLog(author, $"fetched meme '{info.Arguments[0]}'");
-			client.SendMessageToRoom($"https://www.lohikar.io/i/m/{info.Arguments[0]}", channel);
-		}
 	}
 }

@@ -8,13 +8,13 @@ namespace XenoBot2
 		public static readonly IDictionary<string, Command> Content = new Dictionary<string, Command>
 		{
 			{
-				"$wtc", new Command
+				"wtc", new Command
 				{
-					AliasFor = "$commit"
+					AliasFor = "commit"
 				}
 			},
 			{
-				"$date", new Command
+				"date", new Command
 				{
 					HelpText = "Shows the current date in UTC.",
 					HelpCategory = "Utility",
@@ -22,7 +22,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$time", new Command
+				"time", new Command
 				{
 					HelpText = "Shows the current time in UTC",
 					HelpCategory = "Utility",
@@ -30,7 +30,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$enable", new Command
+				"enable", new Command
 				{
 					HelpText = "Enables a disabled command on the current channel.",
 					Permission = Permission.Administrator,
@@ -40,7 +40,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$disable", new Command
+				"disable", new Command
 				{
 					HelpText = "Disables an enabled command on the current channel.",
 					Permission = Permission.Administrator,
@@ -50,13 +50,13 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$test", new Command
+				"test", new Command
 				{
-					AliasFor = "$echo"
+					AliasFor = "echo"
 				}
 			},
 			{
-				"$cat", new Command
+				"cat", new Command
 				{
 					HelpText = "I would like to unsubscribe from cat facts.",
 					HelpCategory = "Fun",
@@ -64,7 +64,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$commit", new Command
+				"commit", new Command
 				{
 					HelpText = "Shows a humorous commit message from WhatTheCommit.",
 					HelpCategory = "Fun",
@@ -72,7 +72,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$echo", new Command
+				"echo", new Command
 				{
 					HelpText = "Echos the command arguments.",
 					HelpCategory = "Utility",
@@ -80,7 +80,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$me", new Command
+				"me", new Command
 				{
 					HelpText = "Prints some basic profile info about you.",
 					HelpCategory = "Utility",
@@ -88,7 +88,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$numeral", new Command
+				"numeral", new Command
 				{
 					HelpText = "Converts an integer into another format. Available formats: roman, words, wordord, metric.",
 					LongHelpText = "Arguments: format number [culture]\n" +
@@ -104,13 +104,13 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$num", new Command
+				"num", new Command
 				{
-					AliasFor = "$numeral"
+					AliasFor = "numeral"
 				}
 			},
 			{
-				"$!halt", new Command
+				"!halt", new Command
 				{
 					HelpText = "Shuts down the bot.",
 					Permission = Permission.BotAdministrator,
@@ -120,7 +120,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$help", new Command
+				"help", new Command
 				{
 					HelpText = "Displays this highly informative help text. Use \"$help command\" to get help for command.",
 					HelpCategory = "CommandCategory.Base",
@@ -129,7 +129,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$trump", new Command
+				"trump", new Command
 				{
 					HelpText = "MAKE HELP GREAT AGAIN!",
 					LongHelpText = "Prints a message in the form \"Make $THING great again!\"\n" +
@@ -140,7 +140,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$version", new Command
+				"version", new Command
 				{
 					HelpText = "Prints the bot's current version number.",
 					HelpCategory = "Core",
@@ -148,14 +148,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"sudo", new Command
-				{
-					Flags = CommandFlag.Hidden,
-					Definition = Commands.Retorts.Sudo
-				}
-			},
-			{
-				"$user", new Command
+				"user", new Command
 				{
 					HelpCategory = "Utility",
 					HelpText = "Gets some information about a user.",
@@ -163,17 +156,11 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$8", new Command
+				"8", new Command
 				{
 					HelpCategory = "Fun",
 					Definition = Commands.Fun.EightBall,
 					HelpText = "Consult the 8 Ball."
-				}
-			},
-			{
-				"test", new Command
-				{
-					AliasFor = "ping"
 				}
 			},
 			{
@@ -185,7 +172,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$avatar", new Command
+				"avatar", new Command
 				{
 					HelpCategory = "Utility",
 					HelpText = "Gets the avatar for the given user",
@@ -193,7 +180,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$!debug", new Command
+				"!debug", new Command
 				{
 					HelpCategory = "Core",
 					Permission = Permission.BotAdministrator,
@@ -203,7 +190,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$ignore", new Command
+				"ignore", new Command
 				{
 					HelpCategory = "Core",
 					Permission = Permission.Moderator,

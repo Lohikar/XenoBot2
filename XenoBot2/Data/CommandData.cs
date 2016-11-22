@@ -7,27 +7,6 @@ namespace XenoBot2.Data
 	/// </summary>
 	internal static class Strings
 	{
-		public static readonly IReadOnlyList<string> SudoMessages = new List<string>
-		{
-			"You can't tell me what to do!",
-			"You're not the boss of me!",
-			"I can't do that.",
-			"Go `fsck` yourself.",
-			"I'm sorry, but I can't do that {0}.",
-			"*HISS*",
-			"No.",
-			"Do it yourself."
-		};
-
-		public static readonly IReadOnlyList<string> SudoAdminMessages = new List<string>
-		{
-			"Alright.",
-			"Right away.",
-			"Sure.",
-			"Why not?",
-			"I guess."
-		};
-
 		public static IList<string> Names;
 		public static IList<string> WhatTheCommit;
 
