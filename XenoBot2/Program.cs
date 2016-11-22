@@ -75,7 +75,7 @@ namespace XenoBot2
 				// TODO: More intelligent reconnection
 				NonBlockingConsole.WriteLine("ERROR: !! DISCONNECTED FROM DISCORD !!");
 				NonBlockingConsole.WriteLine("Waiting 10 seconds and reconnecting.");
-				Thread.Sleep(100.Seconds());
+				Thread.Sleep(10.Seconds());
 				Connect(out _clientThread, _client);
 			};
 			
