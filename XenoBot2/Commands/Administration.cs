@@ -35,8 +35,8 @@ namespace XenoBot2.Commands
 				client.SendMessageToRoom("You must specify the command to enable.", channel);
 				return;
 			}
-			if (Program.CombinedChannelCommandMgr.EnableCommand(info.Arguments.First(), channel))
-				client.SendMessageToRoom($"Enabled command '{info.Arguments.First()}'", channel);
+			//if (Program.CombinedChannelCommandMgr.EnableCommand(info.Arguments.First(), channel))
+			//	client.SendMessageToRoom($"Enabled command '{info.Arguments.First()}'", channel);
 		}
 
 		internal static void Disable(DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel)
@@ -46,8 +46,8 @@ namespace XenoBot2.Commands
 				client.SendMessageToRoom("You must specify the command to disable.", channel);
 				return;
 			}
-			if (Program.CombinedChannelCommandMgr.DisableCommand(info.Arguments.First(), channel))
-				client.SendMessageToRoom($"Disabled command '{info.Arguments.First()}'", channel);
+			//if (Program.CombinedChannelCommandMgr.DisableCommand(info.Arguments.First(), channel))
+			//	client.SendMessageToRoom($"Disabled command '{info.Arguments.First()}'", channel);
 		}
 
 		internal static void BotDebug(DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel)
@@ -91,22 +91,16 @@ namespace XenoBot2.Commands
 					}
 					var cmdtxt = string.Join(" ", info.Arguments.Skip(1));
 					Utilities.WriteLog(member, $"requested cmdinfo for '{cmdtxt}'");
-					var cmd = Program.CombinedChannelCommandMgr.ParseCommand(cmdtxt, channel);
+					var cmd = CommandParser.ParseCommand(cmdtxt, channel);
 					if (cmd == null)
 					{
 						client.SendMessageToRoom("Error: Command is not defined", channel);
 						return;
 					}
-					var cmddata = CommandStore.Commands[cmd.CommandText].ResolveCommand();
+					var cmddata = CommandStore.Commands[cmd.Item1.CommandText].ResolveCommand();
 					client.SendMessageToRoom($"Input: {cmdtxt}\n" +
 					                         "```\n" +
-					                         $"CmdText: {cmd.CommandText}\n" +
-					                         $"Status: {cmd.Status.Humanize()}\n" +
-					                         $"IsEnabled: {cmd.Meta.IsEnabled}\n" +
-					                         $"LastUseTime: {cmd.Meta.LastUseTime.Humanize()}\n" +
-					                         $"DisablerMember: {cmd.Meta.DisablerMember?.GetFullUsername()}\n" +
-					                         $"LastExecMember: {cmd.Meta.LastExecutor?.GetFullUsername()}\n" +
-					                         $"InvokeCooldown: {cmd.Meta.MinimumTimeBetweenInvokes.Humanize()}\n" +
+					                         $"CmdText: {cmd.Item1.CommandText}\n" +
 					                         $"Flags: {cmddata.Flags}\n" +
 											 $"PermissionFlags: {cmddata.Permission}\n" +
 					                         $"Category: {cmddata.HelpCategory}\n" +

@@ -67,7 +67,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CombinedChannelCommandManager.cs" />
+    <Compile Include="CommandParser.cs" />
+    <Compile Include="SharedData.cs" />
+    <Compile Include="UserDataStore.cs" />
     <Compile Include="DefaultCommands.cs" />
     <Compile Include="CommandStore.cs" />
     <Compile Include="Commands\Administration.cs" />

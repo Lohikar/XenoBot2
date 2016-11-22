@@ -52,4 +52,21 @@ namespace XenoBot2.Shared
 		/// </summary>
 		Hidden = 16
 	}
+
+	[Flags]
+	public enum CommandStateFlag
+	{
+		/// <summary>
+		///		No special state is set.
+		/// </summary>
+		None = 0,
+		/// <summary>
+		///		The command is disabled in this context.
+		/// </summary>
+		Disabled = 1,
+		/// <summary>
+		///		The command is hidden from help indexes in this context.
+		/// </summary>
+		Hidden = 2
+	}
 }

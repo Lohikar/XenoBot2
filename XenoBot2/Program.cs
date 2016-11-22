@@ -13,7 +13,7 @@ namespace XenoBot2
 	internal static class Program
 	{
 		private static DiscordClient _client;
-		internal static CombinedChannelCommandManager CombinedChannelCommandMgr;
+		//internal static CombinedChannelCommandManager CombinedChannelCommandMgr;
 		private static bool _exit;
 		private static Thread _clientThread;
 
@@ -26,20 +26,8 @@ namespace XenoBot2
 			CommandStore.Commands = new CommandStore();
 			// load default commands
 			CommandStore.Commands.AddMany(DefaultCommands.Content);
-
-			// initialize CombinedChannelCommandManager
-			CombinedChannelCommandMgr = new CombinedChannelCommandManager();
-			CombinedChannelCommandMgr.ChannelRegistered += e =>
-			{
-				Utilities.WriteLog($"Channel '{e.GetName()}' registered with CommandManager.");
-			};
-			CombinedChannelCommandMgr.CommandRegistered +=
-				(command, channel) =>
-				{
-					Utilities.WriteLog($"Command '{command}' registered on channel '{channel.GetName()}'");
-				};
-
-			Utilities.WriteLog("Loaded CombinedChannelCommandManager...");
+			SharedData.CommandState = new UserDataStore<CommandStateFlag>(CommandStateFlag.None);
+			SharedData.UserPermissions = new UserDataStore<PermissionFlag>(PermissionFlag.User);
 
 			Utilities.WriteLog("Loading API key from disk...");
 			StreamReader apifile;
@@ -150,19 +138,16 @@ namespace XenoBot2
 
 			if (string.IsNullOrWhiteSpace(messageText)) return;
 
-			var cmdinfo = GetInfo(messageText, channel, author);
-			if (cmdinfo?.CommandText == null) return;	// command not found
-
 			// Process command & execute
-			var cmd = CommandStore.Commands[cmdinfo.CommandText].ResolveCommand();
-			if (cmd?.Definition == null)
+			var cmd = CommandParser.ParseCommand(messageText, channel);
+			if (cmd.Item2 == null)
 			{
-				Utilities.WriteLog(string.Format(Messages.CommandNotDefined, cmdinfo.CommandText));
-				SendMessageToRoom($"The command '{cmdinfo.CommandText}' seems to be broken right now.", channel);
+				Utilities.WriteLog(string.Format(Messages.CommandNotDefined, cmd.Item1));
+				SendMessageToRoom($"The command '{cmd.Item1}' seems to be broken right now.", channel);
 				return;
 			}
-			if ((cmd.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.Private) || 
-				cmd.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.Private)
+			if ((cmd.Item2.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.Private) || 
+				cmd.Item2.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.Private)
 			{
 				SendMessageToRoom("That command cannot be used here.", channel);
 				return;
@@ -170,7 +155,7 @@ namespace XenoBot2
 			try
 			{
 				// execute command
-				cmd.Definition(_client, cmdinfo, author, channel);
+				cmd.Item2.Definition(_client, cmd.Item1, author, channel);
 			}
 			catch (InvalidCommandException ex)
 			{
@@ -179,9 +164,9 @@ namespace XenoBot2
 			}
 			catch (Exception ex)
 			{
-				Utilities.WriteLog($"An exception occurred during execution of command '{cmdinfo.CommandText}'," +
-				                   $" args '{string.Join(", ", cmdinfo.Arguments)}'.\n" + ex.Message);
-				SendMessageToRoom($"An internal error occurred running command '{cmdinfo.CommandText}'.", channel);
+				Utilities.WriteLog($"An exception occurred during execution of command '{cmd.Item1.CommandText}'," +
+				                   $" args '{string.Join(", ", cmd.Item1.Arguments)}'.\n" + ex.Message);
+				SendMessageToRoom($"An internal error occurred running command '{cmd.Item1.CommandText}'.", channel);
 			}
 		}
 
@@ -189,26 +174,26 @@ namespace XenoBot2
 
 		private static void SendMessageToRoom(string data, DiscordChannelBase channel) => _client.SendMessageToRoom(data, channel);
 
-		private static CommandInfo GetInfo(string messageText, DiscordChannelBase channel, DiscordMember originMember)
-		{
-			var cmd = CombinedChannelCommandMgr.ParseCommand(messageText.Trim(), channel);
+		//private static CommandInfo GetInfo(string messageText, DiscordChannelBase channel, DiscordMember originMember)
+		//{
+		//	var cmd = CombinedChannelCommandMgr.ParseCommand(messageText.Trim(), channel);
 
-			switch (cmd.Status)
-			{
-				case CommandStatus.RateLimited:
-					Utilities.WriteLog(originMember, $"tried to use rate-limited command '{cmd.CommandText}'");
-					return null;
+		//	switch (cmd.Status)
+		//	{
+		//		case CommandStatus.RateLimited:
+		//			Utilities.WriteLog(originMember, $"tried to use rate-limited command '{cmd.CommandText}'");
+		//			return null;
 
-				case CommandStatus.Disabled:
-					Utilities.WriteLog(originMember, $"tried to use disabled command '{cmd.CommandText}'");
-					return null;
-				case CommandStatus.AdminDisabled:
-					Utilities.WriteLog(originMember, $"tried to use admin-disabled command '{cmd.CommandText}'");
-					return null;
+		//		case CommandStatus.Disabled:
+		//			Utilities.WriteLog(originMember, $"tried to use disabled command '{cmd.CommandText}'");
+		//			return null;
+		//		case CommandStatus.AdminDisabled:
+		//			Utilities.WriteLog(originMember, $"tried to use admin-disabled command '{cmd.CommandText}'");
+		//			return null;
 
-				default:
-					return cmd;
-			}
-		}
+		//		default:
+		//			return cmd;
+		//	}
+		//}
 	}
 }

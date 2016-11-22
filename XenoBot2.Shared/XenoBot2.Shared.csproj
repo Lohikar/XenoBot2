@@ -62,7 +62,6 @@
   <ItemGroup>
     <Compile Include="Command.cs" />
     <Compile Include="CommandInfo.cs" />
-    <Compile Include="CommandMetadata.cs" />
     <Compile Include="Flags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

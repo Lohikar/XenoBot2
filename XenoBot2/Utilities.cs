@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using DiscordSharp;
 using DiscordSharp.Objects;
-using Humanizer;
 using XenoBot2.Shared;
 
 namespace XenoBot2
