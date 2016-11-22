@@ -80,8 +80,10 @@ namespace XenoBot2.Commands
 			
 			builder.Append($"{cmdname} - {cmd.GetCategoryString()}");
 
-			if (cmd.AliasFor == null)
+			if (cmd.AliasFor != null)
 				builder.AppendLine($"(Alias For {cmd.AliasFor})");
+			else
+				builder.AppendLine();
 
 			builder.AppendLine($"Required Permissions: {cmd.Permission}");
 
@@ -97,7 +99,7 @@ namespace XenoBot2.Commands
 		internal static void Version(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
 		{
 			Utilities.WriteLog(author, "requested bot version.");
-			client.SendMessageToRoom($"XenoBot v{Utilities.GetVersion()}", channel);
+			client.SendMessageToRoom($"XenoBot2 v{Utilities.GetVersion()}", channel);
 		}
 	}
 }
