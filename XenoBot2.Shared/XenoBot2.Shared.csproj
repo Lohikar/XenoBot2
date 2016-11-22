@@ -34,10 +34,6 @@
       <HintPath>..\packages\DiscordSharp.0.6.2.0-rc1\lib\DiscordSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Humanizer, Version=2.1.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Humanizer.Core.2.1.0\lib\netstandard1.0\Humanizer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
       <Private>True</Private>

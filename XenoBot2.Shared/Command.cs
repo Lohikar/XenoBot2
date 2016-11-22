@@ -1,7 +1,5 @@
-﻿using System;
-using DiscordSharp;
+﻿using DiscordSharp;
 using DiscordSharp.Objects;
-using Humanizer;
 
 namespace XenoBot2.Shared
 {
@@ -68,10 +66,6 @@ namespace XenoBot2.Shared
 		///		The category this command belongs to. Shows in help index.
 		/// </summary>
 		public CommandCategory Category = CommandCategory.Unknown;
-		/// <summary>
-		///		Minimum time between invokes of command.
-		/// </summary>
-		public TimeSpan Cooldown = 5.Seconds();
 
 		/// <summary>
 		///		The permissions required to use this command.
