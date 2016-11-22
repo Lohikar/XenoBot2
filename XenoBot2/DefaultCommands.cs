@@ -110,7 +110,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"$!HALT", new Command
+				"$!halt", new Command
 				{
 					HelpText = "Shuts down the bot.",
 					Permission = PermissionFlag.BotAdministrator,
