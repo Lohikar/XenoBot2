@@ -77,11 +77,12 @@
   <ItemGroup>
     <Compile Include="BotCore.cs" />
     <Compile Include="CommandParser.cs" />
+    <Compile Include="Commands\ChannelAdministration.cs" />
     <Compile Include="Commands\Debug.cs" />
     <Compile Include="UserDataStore.cs" />
     <Compile Include="DefaultCommands.cs" />
     <Compile Include="CommandStore.cs" />
-    <Compile Include="Commands\Administration.cs" />
+    <Compile Include="Commands\BotAdministration.cs" />
     <Compile Include="Commands\Base.cs" />
     <Compile Include="Commands\Fun.cs" />
     <Compile Include="Commands\Utility.cs" />

@@ -56,5 +56,22 @@ namespace XenoBot2
 			=> WriteLog($"Client {originClient.GetFullUsername()} {data}");
 
 		public static Version GetVersion() => Assembly.GetExecutingAssembly().GetName().Version;
+
+		/// <summary>
+		///		Toggles the ignore state for a user, globally or per-channel.
+		/// </summary>
+		/// <param name="uid">The user ID to toggle ignore for.</param>
+		/// <param name="chid">The channel ID to ignore on. Omit for global.</param>
+		/// <returns>True if user is now ignored, false if not.</returns>
+		public static bool ToggleIgnore(ulong uid, ulong chid = 0)
+		{
+			var ignored = Utilities.Permitted(UserFlag.Ignored, uid);
+			if (ignored)
+				Program.BotInstance.UserFlags[uid, chid] ^= UserFlag.Ignored;
+			else
+				Program.BotInstance.UserFlags[uid, chid] |= UserFlag.Ignored;
+
+			return !ignored;
+		}
 	}
 }

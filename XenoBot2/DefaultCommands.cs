@@ -36,7 +36,7 @@ namespace XenoBot2
 					Permission = UserFlag.Administrator,
 					HelpCategory = "Administration",
 					Flags = CommandFlag.NoPrivateChannel | CommandFlag.NonDisableable,
-					Definition = Commands.Administration.Enable
+					Definition = Commands.ChannelAdministration.Enable
 				}
 			},
 			{
@@ -46,7 +46,7 @@ namespace XenoBot2
 					Permission = UserFlag.Administrator,
 					HelpCategory = "Administration",
 					Flags = CommandFlag.NoPrivateChannel | CommandFlag.NonDisableable,
-					Definition = Commands.Administration.Disable
+					Definition = Commands.ChannelAdministration.Disable
 				}
 			},
 			{
@@ -116,7 +116,7 @@ namespace XenoBot2
 					HelpText = "Shuts down the bot.",
 					Permission = UserFlag.BotAdministrator,
 					HelpCategory = "Administration",
-					Definition = Commands.Administration.HaltBot,
+					Definition = Commands.BotAdministration.HaltBot,
 					Flags = CommandFlag.NonDisableable | CommandFlag.UsableWhileIgnored
 				}
 			},
@@ -175,7 +175,7 @@ namespace XenoBot2
 					HelpCategory = "Core",
 					Permission = UserFlag.Moderator,
 					Flags = CommandFlag.UsableWhileIgnored | CommandFlag.NoPrivateChannel,
-					Definition = Commands.Administration.IgnoreUser,
+					Definition = Commands.ChannelAdministration.IgnoreUser,
 					HelpText = "Toggles command ignore for a user."
 				}
 			},
@@ -185,7 +185,7 @@ namespace XenoBot2
 					HelpCategory = "Core",
 					Permission = UserFlag.BotAdministrator,
 					Flags = CommandFlag.NonDisableable | CommandFlag.UsableWhileIgnored,
-					Definition = Commands.Administration.GlobalIgnoreUser,
+					Definition = Commands.BotAdministration.GlobalIgnoreUser,
 					HelpText = "Toggles command ignore for a user on all channels."
 				}
 			},
