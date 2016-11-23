@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using DiscordSharp;
-using DiscordSharp.Events;
-using DiscordSharp.Objects;
+using System.Threading.Tasks;
+using Discord;
 using Humanizer;
 using XenoBot2.Data;
 using XenoBot2.Shared;
@@ -13,14 +12,8 @@ namespace XenoBot2
 	internal static class Program
 	{
 		private static DiscordClient _client;
-		//internal static CombinedChannelCommandManager CombinedChannelCommandMgr;
-		private static bool _exit;
-		private static Thread _clientThread;
-		private static bool _noReconnect = false;
 
 		public const char Prefix = '$';
-
-		internal static void Exit() => _exit = true;
 
 		private static void Main(string[] args)
 		{
@@ -29,10 +22,10 @@ namespace XenoBot2
 			CommandStore.Commands = new CommandStore();
 			// load default commands
 			CommandStore.Commands.AddMany(DefaultCommands.Content);
-			SharedData.CommandState = new UserDataStore<CommandState>(CommandState.None);
-			SharedData.UserFlags = new UserDataStore<UserFlag>(UserFlag.User);
+			SharedData.CommandState = new UserDataStore<string, ulong, CommandState>(CommandState.None, 0);
+			SharedData.UserFlags = new UserDataStore<ulong, ulong, UserFlag>(UserFlag.User, 0);
 
-			SharedData.UserFlags.Add("174018252161286144", "*", UserFlag.BotAdministrator);
+			SharedData.UserFlags.Add(174018252161286144, SharedData.UserFlags.GlobalValue, UserFlag.BotAdministrator);
 
 			Utilities.WriteLog("Loading API key from disk...");
 			StreamReader apifile;
@@ -52,34 +45,14 @@ namespace XenoBot2
 			}
 
 			// initialize client
-			_client = new DiscordClient(isBotAccount: true, tokenOverride: apifile.ReadToEnd());
+			_client = new DiscordClient();
 
-			Utilities.WriteLog("Started client.");
+			_client.MessageReceived += async (s, e) =>
+			{
+				if (!e.Message.IsAuthor)
+					await ParseMessage(e.User, e.Channel, e.Message.RawText);
+			};
 
-			// register events
-			_client.Connected += (sender, e) =>
-			{
-				Utilities.WriteLog($"Logged in to Discord as {e.User.GetFullUsername()}");
-				Console.Title = $"{e.User.GetFullUsername()} - XenoBot";
-				_client.UpdateCurrentGame($"v{Utilities.GetVersion()}");
-			};
-			_client.MessageReceived += ParseMessageEventWrapper;
-			_client.PrivateMessageReceived += ParsePrivateMessage;
-			_client.MentionReceived += ClientMentioned;
-			_client.UserAddedToServer += UserJoin;
-			_client.UserRemovedFromServer += UserLeave;
-			_client.SocketClosed += (sender, e) =>
-			{
-				if (_noReconnect) return;
-				// something went wrong and the socket got closed, attempt reconnect
-				// TODO: More intelligent reconnection
-				NonBlockingConsole.WriteLine("ERROR: !! DISCONNECTED FROM DISCORD !!");
-				NonBlockingConsole.WriteLine("Waiting 10 seconds and reconnecting.");
-				Thread.Sleep(10.Seconds());
-				Connect(out _clientThread, _client);
-			};
-			
-			Connect(out _clientThread, _client);
 
 			Utilities.WriteLog("Setting up WhatTheCommit...");
 
@@ -92,57 +65,17 @@ namespace XenoBot2
 
 			Utilities.WriteLog("Done.");
 
-			// Sleep main thread until time to exit
-			while (true)
+			_client.ExecuteAndWait(async () =>
 			{
-				Thread.Sleep(1.Seconds());
-				if (_exit)
-					break;
-			}
-
-			_client.UpdateCurrentGame("Offline");
-
-			_noReconnect = true;
-
-			_client.Logout();
+				await _client.Connect(await apifile.ReadToEndAsync(), TokenType.Bot);
+			});
 		}
 
-		private static void Connect(out Thread clientThread, DiscordClient client)
-		{
-			client.SendLoginRequest();
-			clientThread = new Thread(client.Connect);
-			clientThread.Start();
-		}
-
-		private static void UserLeave(object sender, DiscordGuildMemberRemovedEventArgs e)
-		{
-			Utilities.WriteLog(e.MemberRemoved, $"has left {e.Server.Name}");
-			_client.SendMessageToUser($"**{e.MemberRemoved.Username}** has left {e.Server.Name}.", e.Server.Owner);
-		}
-
-		private static void UserJoin(object sender, DiscordGuildMemberAddEventArgs e)
-		{
-			Utilities.WriteLog(e.AddedMember, $"has joined {e.Guild.Name}");
-			_client.SendMessageToUser($"**{e.AddedMember.Username}** has joined {e.Guild.Name}.", e.Guild.Owner);
-		}
-
-		private static void ClientMentioned(object sender, DiscordMessageEventArgs e)
-			 => ParseMessage(e.Author, e.Channel, e.MessageText.Replace(_client.Me.MakeMention(), "").Trim(), true);
-
-		private static void ParsePrivateMessage(object sender, DiscordPrivateMessageEventArgs e)
-			 => ParseMessage(e.Author, e.Channel, e.Message.Trim());
-		
-
-		private static void ParseMessageEventWrapper(object sender, DiscordMessageEventArgs e)
-			 => ParseMessage(e.Author, e.Channel, e.MessageText);
-		
-
-		private static void ParseMessage(DiscordMember author, DiscordChannelBase channel, string messageText, bool skipPrefix = false)
+		private static async Task ParseMessage(User author, Channel channel, string messageText, bool skipPrefix = false)
 		{
 			// silently ignore our own messages & messages from other bots
-			if (CheckBotIgnore(author) ||
-				string.IsNullOrWhiteSpace(messageText) ||
-				(messageText[0] != Prefix && !skipPrefix)) return;
+			if (string.IsNullOrWhiteSpace(messageText) ||
+			    (messageText[0] != Prefix && !skipPrefix)) return;
 
 			var text = skipPrefix ? messageText : messageText.Substring(1);
 
@@ -156,8 +89,8 @@ namespace XenoBot2
 				SendMessageToRoom($"The command '{cmd.Item1}' seems to be broken right now.", channel);
 				return;
 			}
-			if ((cmd.Item2.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.Private) || 
-				cmd.Item2.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.Private)
+			if ((cmd.Item2.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.IsPrivate) ||
+			    cmd.Item2.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.IsPrivate)
 			{
 				SendMessageToRoom("That command cannot be used here.", channel);
 				return;
@@ -167,7 +100,7 @@ namespace XenoBot2
 			try
 			{
 				// execute command
-				cmd.Item2.Definition(_client, cmd.Item1, author, channel);
+				await cmd.Item2.Definition(cmd.Item1, author, channel);
 			}
 			catch (InvalidCommandException ex)
 			{
@@ -182,8 +115,6 @@ namespace XenoBot2
 			}
 		}
 
-		private static bool CheckBotIgnore(DiscordMember member) => member == _client.Me || member.IsBot;
-
-		private static void SendMessageToRoom(string data, DiscordChannelBase channel) => _client.SendMessageToRoom(data, channel);
+		private static void SendMessageToRoom(string data, Channel channel) => channel.SendMessage(data);
 	}
 }

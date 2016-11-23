@@ -4,7 +4,7 @@ namespace XenoBot2
 {
 	internal static class SharedData
 	{
-		public static UserDataStore<UserFlag> UserFlags;
-		public static UserDataStore<CommandState> CommandState;
+		public static UserDataStore<ulong, ulong, UserFlag> UserFlags;
+		public static UserDataStore<string, ulong, CommandState> CommandState;
 	}
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using DiscordSharp;
-using DiscordSharp.Objects;
+using Discord;
 using XenoBot2.Shared;
 
 namespace XenoBot2
@@ -19,12 +18,12 @@ namespace XenoBot2
 		internal static Command ResolveCommand(this Command command)
 			=> command.AliasFor == null ? command : CommandStore.Commands[command.AliasFor];
 
-		internal static bool Permitted(UserFlag flag, DiscordMember member, DiscordChannelBase channel = null)
-			=> Permitted(flag, member.ID, channel?.ID);
+		internal static bool Permitted(UserFlag flag, User member, Channel channel = null)
+			=> Permitted(flag, member.Id, channel?.Id);
 
-		internal static bool Permitted(UserFlag flag, string member, string channel = null)
+		internal static bool Permitted(UserFlag flag, ulong member, ulong? channel = null)
 		{
-			var channelData = channel != null ? SharedData.UserFlags[member, channel] : UserFlag.None;
+			var channelData = channel != null ? SharedData.UserFlags[member, channel.Value] : UserFlag.None;
 			var globalData = SharedData.UserFlags[member];
 
 			return ((channelData | globalData) & flag) == flag;
@@ -40,31 +39,28 @@ namespace XenoBot2
 			NonBlockingConsole.WriteLine(message);
 		}
 
-		///  <summary>
-		/// 		Sends a message to the specified channel.
-		///  </summary>
-		/// <param name="client"></param>
-		/// <param name="message">The message to send.</param>
-		///  <param name="channel">The channel to send the message to.</param>
-		internal static void SendMessageToRoom(this DiscordClient client, string message, DiscordChannelBase channel)
-		{
-			if (string.IsNullOrWhiteSpace(message))
-			{
-				WriteLog($"WARNING: Empty message addressed to '{channel.GetName()}' dropped.");
-				return;
-			}
-			if (channel.Private)
-				client.SendMessageToUser(message, ((DiscordPrivateChannel)channel).Recipient);
-			else
-				client.SendMessageToChannel(message, (DiscordChannel)channel);
-		}
+		/////  <summary>
+		///// 		Sends a message to the specified channel.
+		/////  </summary>
+		///// <param name="client"></param>
+		///// <param name="message">The message to send.</param>
+		/////  <param name="channel">The channel to send the message to.</param>
+		//internal static void SendMessageToRoom(this DiscordClient client, string message, Channel channel)
+		//{
+		//	if (string.IsNullOrWhiteSpace(message))
+		//	{
+		//		WriteLog($"WARNING: Empty message addressed to '{channel.Name}' dropped.");
+		//		return;
+		//	}
+		//	client.SendMessageToRoom(message, channel);
+		//}
 
 		/// <summary>
 		///     Writes an entry to the log with a date stamp & event origin user.
 		/// </summary>
 		/// <param name="originClient">The <see cref="DiscordMember" /> that triggered this event.</param>
 		/// <param name="data">The message to write to the log.</param>
-		internal static void WriteLog(DiscordMember originClient, string data)
+		internal static void WriteLog(User originClient, string data)
 			=> WriteLog($"Client {originClient.GetFullUsername()} {data}");
 
 		public static Version GetVersion() => Assembly.GetExecutingAssembly().GetName().Version;

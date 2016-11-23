@@ -1,6 +1,6 @@
 ﻿using System;
-using DiscordSharp;
-using DiscordSharp.Objects;
+using System.Threading.Tasks;
+using Discord;
 using XenoBot2.Data;
 using XenoBot2.Shared;
 
@@ -10,7 +10,7 @@ namespace XenoBot2.Commands
 	{
 		private static Random _rnd;
 
-		internal static void WhatTheCommit(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
+		internal static async Task WhatTheCommit(CommandInfo info, User author, Channel channel)
 		{
 			if (_rnd == null)
 				_rnd = new Random();
@@ -20,26 +20,26 @@ namespace XenoBot2.Commands
 				.Replace("XNAMEX", Strings.Names.GetRandom())
 				.Replace("XUPPERNAMEX", Strings.Names.GetRandom().ToUpper())
 				.Replace("XNUMX", _rnd.Next(9000).ToString());
-			client.SendMessageToRoom($"*{msg}*", channel);
+			await channel.SendMessage($"*{msg}*");
 		}
 
-		internal static void CatFact(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
+		internal static async Task CatFact(CommandInfo info, User author, Channel channel)
 		{
 			Utilities.WriteLog(author, "requested a cat fact.");
-			client.SendMessageToRoom($"Cat Fact: *{Shared.Utilities.GetStringFromWebService("https://cat-facts-as-a-service.appspot.com/fact")}*", channel);
+			await channel.SendMessage($"Cat Fact: *{Shared.Utilities.GetStringFromWebService("https://cat-facts-as-a-service.appspot.com/fact")}*");
 		}
 
-		internal static void EightBall(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
+		internal static async Task EightBall(CommandInfo info, User author, Channel channel)
 		{
 			Utilities.WriteLog(author, "consulted the 8 ball.");
 			if (info.HasArguments)
 			{
-				client.SendMessageToRoom($"{author.MakeMention()} asked: **{string.Join(" ", info.Arguments)}**\n" +
-				                  $"The 8 Ball says... *{Strings.EightBall.GetRandom()}*", channel);
+				await channel.SendMessage($"{author.MakeMention()} asked: **{string.Join(" ", info.Arguments)}**\n" +
+				                  $"The 8 Ball says... *{Strings.EightBall.GetRandom()}*");
 			}
 			else
 			{
-				client.SendMessageToRoom($"*{Strings.EightBall.GetRandom()}*", channel);
+				await channel.SendMessage($"*{Strings.EightBall.GetRandom()}*");
 			}
 			
 		}

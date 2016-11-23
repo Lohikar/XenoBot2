@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using DiscordSharp;
-using DiscordSharp.Objects;
+using System.Threading.Tasks;
+using Discord;
 using Humanizer;
 using XenoBot2.Data;
 using XenoBot2.Shared;
@@ -11,51 +11,51 @@ namespace XenoBot2.Commands
 {
 	internal static class Utility
 	{
-		internal static void Echo(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
+		internal static async Task Echo(CommandInfo info, User author, Channel channel)
 		{
 			Utilities.WriteLog(author, "requested an echo.");
-			client.SendMessageToRoom($"{author.Username} said: {string.Join(" ", info.Arguments)}", channel);
+			await channel.SendMessage($"{author.Name} said: {string.Join(" ", info.Arguments)}");
 		}
 
-		internal static void Time(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
+		internal static async Task Time(CommandInfo info, User author, Channel channel)
 		{
 			Utilities.WriteLog(author, "requested the time.");
-			client.SendMessageToRoom($"The time is {DateTime.UtcNow.ToLongTimeString()} (UTC).", channel);
+			await channel.SendMessage($"The time is {DateTime.UtcNow.ToLongTimeString()} (UTC).");
 		}
 
-		internal static void Date(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
+		internal static async Task Date(CommandInfo info, User author, Channel channel)
 		{
 			Utilities.WriteLog(author, "requested the date.");
-			client.SendMessageToRoom($"It is {DateTime.UtcNow.ToLongDateString()} (UTC).", channel);
+			await channel.SendMessage($"It is {DateTime.UtcNow.ToLongDateString()} (UTC).");
 		}
 
-		internal static void Me(DiscordClient client, CommandInfo info, DiscordMember origin, DiscordChannelBase channel)
+		internal static async Task Me(CommandInfo info, User origin, Channel channel)
 		{
 			Utilities.WriteLog(origin, "requested info about themselves.");
-			client.SendMessageToRoom(GetInfoString(origin, channel), channel);
+			await channel.SendMessage(GetInfoString(origin, channel));
 		}
 
-		private static string GetInfoString(DiscordMember author, DiscordChannelBase channel)
+		private static string GetInfoString(User author, Channel channel)
 			=> $"Information about: **{author.GetFullUsername()}**\n" +
 			   "```\n" +
-			   $"ID:                   {author.ID}\n" +
+			   $"ID:                   {author.Id}\n" +
 			   $"Bot:                  {author.IsBot}\n" +
-			   $"Avatar:               {author.GetAvatarURL()}\n" +
-			   $"User Flags (Channel): {SharedData.UserFlags[author.ID, channel.ID]}\n" +
-			   $"User Flags (Global):  {SharedData.UserFlags[author.ID]}" +
+			   $"Avatar:               {author.AvatarUrl}\n" +
+			   $"User Flags (Channel): {SharedData.UserFlags[author.Id, channel.Id]}\n" +
+			   $"User Flags (Global):  {SharedData.UserFlags[author.Id]}" +
 			   "```";
 
-		internal static void ConvertNumber(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
+		internal static async Task ConvertNumber(CommandInfo info, User author, Channel channel)
 		{
 			if (info.Arguments.LessThan(2))
 			{
-				client.SendMessageToRoom(Messages.CommandNotEnoughArguments, channel);
+				await channel.SendMessage(Messages.CommandNotEnoughArguments);
 				return;
 			}
 			int number;
 			if (!int.TryParse(info.Arguments[1], out number))
 			{
-				client.SendMessageToRoom($"{info.Arguments[1]} is not a valid integer.", channel);
+				await channel.SendMessage($"{info.Arguments[1]} is not a valid integer.");
 				return;
 			}
 			CultureInfo culture = null;
@@ -67,7 +67,7 @@ namespace XenoBot2.Commands
 				}
 				catch (CultureNotFoundException)
 				{
-					client.SendMessageToRoom("Unknown culture.", channel);
+					await channel.SendMessage("Unknown culture.");
 					return;
 				}
 			}
@@ -76,70 +76,70 @@ namespace XenoBot2.Commands
 				switch (info.Arguments[0])
 				{
 					case "roman":
-						client.SendMessageToRoom($"{number} in roman numerals is {number.ToRoman()}.", channel);
+						await channel.SendMessage($"{number} in roman numerals is {number.ToRoman()}.");
 						break;
 
 					case "words":
-						client.SendMessageToRoom($"{number} in words is {number.ToWords(culture)}.", channel);
+						await channel.SendMessage($"{number} in words is {number.ToWords(culture)}.");
 						break;
 
 					case "metric":
-						client.SendMessageToRoom($"{number} in metric is {number.ToMetric()}.", channel);
+						await channel.SendMessage($"{number} in metric is {number.ToMetric()}.");
 						break;
 
 					case "wordord":
-						client.SendMessageToRoom($"{number} is {number.ToOrdinalWords(culture)}.", channel);
+						await channel.SendMessage($"{number} is {number.ToOrdinalWords(culture)}.");
 						break;
 
 					default:
-						client.SendMessageToRoom($"Unknown conversion type *{info.Arguments[0]}*.", channel);
+						await channel.SendMessage($"Unknown conversion type *{info.Arguments[0]}*.");
 						break;
 				}
 			}
 			catch (ArgumentOutOfRangeException)
 			{
-				client.SendMessageToRoom("Error: number out of range.", channel);
+				await channel.SendMessage("Error: number out of range.");
 			}
 			catch
 			{
-				client.SendMessageToRoom("This shouldn't happen; something broke.", channel);
+				await channel.SendMessage("This shouldn't happen; something broke.");
 			}
 		}
 
-		internal static void UserInfo(DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel)
+		internal static async Task UserInfo(CommandInfo info, User member, Channel channel)
 		{
 			var author = !info.HasArguments 
 				? member 
-				: info.Arguments.First().GetMemberFromMention(client, channel);
+				: info.Arguments.First().GetMemberFromMention(channel);
 			if (author == null)
 			{
-				client.SendMessageToRoom("User does not exist.", channel);
+				await channel.SendMessage("User does not exist.");
 				return;
 			}
-			client.SendMessageToRoom(GetInfoString(author, channel), channel);
+			await channel.SendMessage(GetInfoString(author, channel));
 		}
 
-		internal static void Avatar(DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel)
+		internal static async Task Avatar(CommandInfo info, User member, Channel channel)
 		{
 			var author = !info.HasArguments
 				? member
-				: info.Arguments[0].GetMemberFromMention(client, channel);
+				: info.Arguments[0].GetMemberFromMention(channel);
 			if (author == null)
 			{
-				client.SendMessageToRoom("User does not exist.", channel);
+				await channel.SendMessage("User does not exist.");
 				return;
 			}
 
-			client.SendMessageToRoom(
-				string.IsNullOrWhiteSpace(author.Avatar)
+			await channel.SendMessage(
+				string.IsNullOrWhiteSpace(author.AvatarUrl)
 					? "https://www.lohikar.io/i/xb/avatar_missing.jpg"
-					: author.GetAvatarURL().ToString(), channel);
+					: author.AvatarUrl);
 		}
 
-		internal static void Ping(DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel)
+		internal static async Task Ping(CommandInfo info, User member, Channel channel)
 		{
 			Utilities.WriteLog(member, "requested a ping.");
-			client.SendMessageToRoom(info.CommandText == "ping" ? "pong" : $"{info.CommandText} response", channel);
+			await channel.SendMessage(info.CommandText == "ping" ? "pong" : $"{info.CommandText} response");
 		}
 	}
 }

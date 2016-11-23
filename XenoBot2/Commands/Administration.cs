@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using DiscordSharp;
-using DiscordSharp.Objects;
+using System.Threading.Tasks;
+using Discord;
 using Humanizer;
 using XenoBot2.Data;
 using XenoBot2.Shared;
@@ -13,44 +13,43 @@ namespace XenoBot2.Commands
 	/// </summary>
 	internal static class Administration
 	{
-		internal static void HaltBot(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
+		internal static async Task HaltBot(CommandInfo info, User author, Channel channel)
 		{
 			if (Utilities.Permitted(UserFlag.BotAdministrator, author))
 			{
 				Utilities.WriteLog(author, "is shutting down the bot; is admin.");
-				client.SendMessageToRoom("Bot shutting down.", channel);
-				Program.Exit();
+				await channel.SendMessage("Bot shutting down.");
 			}
 			else
 			{
 				Utilities.WriteLog(author, "attempted to shutdown bot, but is not admin.");
-				client.SendMessageToRoom("You are not the bot administrator.", channel);
+				await channel.SendMessage("You are not the bot administrator.");
 			}
 		}
 
-		internal static void Enable(DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel)
+		internal static async Task Enable(CommandInfo info, User member, Channel channel)
 		{
 			if (!info.HasArguments)
 			{
-				client.SendMessageToRoom("You must specify the command to enable.", channel);
+				await channel.SendMessage("You must specify the command to enable.");
 				return;
 			}
 			//if (Program.CombinedChannelCommandMgr.EnableCommand(info.Arguments.First(), channel))
 			//	client.SendMessageToRoom($"Enabled command '{info.Arguments.First()}'", channel);
 		}
 
-		internal static void Disable(DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel)
+		internal static async Task Disable(CommandInfo info, User member, Channel channel)
 		{
 			if (!info.HasArguments)
 			{
-				client.SendMessageToRoom("You must specify the command to disable.", channel);
+				await channel.SendMessage("You must specify the command to disable.");
 				return;
 			}
 			//if (Program.CombinedChannelCommandMgr.DisableCommand(info.Arguments.First(), channel))
 			//	client.SendMessageToRoom($"Disabled command '{info.Arguments.First()}'", channel);
 		}
 
-		internal static void BotDebug(DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel)
+		internal static async Task BotDebug(CommandInfo info, User member, Channel channel)
 		{
 			if (!Utilities.Permitted(UserFlag.BotDebug, member))
 			{
@@ -60,7 +59,7 @@ namespace XenoBot2.Commands
 
 			if (!info.HasArguments)
 			{
-				client.SendMessageToRoom("Argument required.", channel);
+				await channel.SendMessage("Argument required.");
 				return;
 			}
 
@@ -68,26 +67,26 @@ namespace XenoBot2.Commands
 			{
 				case "except":	// throws an exception 
 					throw new InvalidOperationException("$debug::except");
-				case "cmsg":	// send message to channel
-					if (info.Arguments.LessThan(2))
-					{
-						client.SendMessageToRoom("not enough arguments", channel);
-						break;
-					}
-					var id = long.Parse(info.Arguments[1]);
-					var msg = string.Join(" ", info.Arguments.Skip(2));
-					client.SendMessageToChannel(msg, client.GetChannelByID(id));
-					client.SendMessageToUser("Sent message to channel.", member);
-					Utilities.WriteLog(member, $"sent message '{msg}' to channel '{client.GetChannelByID(id).GetName()}'");
-					break;
+				//case "cmsg":    // send message to channel
+				//	if (info.Arguments.LessThan(2))
+				//	{
+				//		await channel.SendMessage("not enough arguments");
+				//		break;
+				//	}
+				//	var id = long.Parse(info.Arguments[1]);
+				//	var msg = string.Join(" ", info.Arguments.Skip(2));
+				//	.SendMessageToChannel(msg, client.GetChannelByID(id));
+				//	client.SendMessageToUser("Sent message to channel.", member);
+				//	Utilities.WriteLog(member, $"sent message '{msg}' to channel '{client.GetChannelByID(id).GetName()}'");
+				//	break;
 				case "cid":		// get channel ID
-					client.SendMessageToRoom($"cid is {channel.ID}", channel);
-					Utilities.WriteLog(member, $"requested channelID (CID) for channel {channel.GetName()}");
+					await channel.SendMessage($"cid is {channel.Id}");
+					Utilities.WriteLog(member, $"requested channelID (CID) for channel {channel.Name}");
 					break;
 				case "cmdinfo":
 					if (!info.HasArguments)
 					{
-						client.SendMessageToRoom("not enough arguments", channel);
+						await channel.SendMessage("not enough arguments");
 						break;
 					}
 					var cmdtxt = string.Join(" ", info.Arguments.Skip(1));
@@ -95,79 +94,77 @@ namespace XenoBot2.Commands
 					var cmd = CommandParser.ParseCommand(cmdtxt, channel);
 					if (cmd == null)
 					{
-						client.SendMessageToRoom("Error: Command is not defined", channel);
+						await channel.SendMessage("Error: Command is not defined");
 						return;
 					}
 					var cmddata = CommandStore.Commands[cmd.Item1.CommandText].ResolveCommand();
-					client.SendMessageToRoom($"Input: {cmdtxt}\n" +
+					await channel.SendMessage($"Input: {cmdtxt}\n" +
 					                         "```\n" +
 					                         $"CmdText: {cmd.Item1.CommandText}\n" +
 					                         $"Flags: {cmddata.Flags}\n" +
 											 $"PermissionFlags: {cmddata.Permission}\n" +
 					                         $"Category: {cmddata.HelpCategory}\n" +
-					                         "```", channel);
+					                         "```");
 					break;
-				case "setgame":
-					if (!info.HasArguments)
-					{
-						client.SendMessageToRoom("not enough arguments", channel);
-					}
-					var gametext = string.Join(" ", info.Arguments.Skip(1));
-					Utilities.WriteLog(member, $"set game to '{gametext}'");
-					client.UpdateCurrentGame(gametext);
-					break;
+				//case "setgame":
+				//	if (!info.HasArguments)
+				//	{
+				//		await channel.SendMessage("not enough arguments");
+				//	}
+				//	var gametext = string.Join(" ", info.Arguments.Skip(1));
+				//	Utilities.WriteLog(member, $"set game to '{gametext}'");
+				//	client.UpdateCurrentGame(gametext);
+				//	break;
 				default:
-					client.SendMessageToRoom("That is not a valid sub-command.", channel);
+					await channel.SendMessage("That is not a valid sub-command.");
 					Utilities.WriteLog(member, "issued invalid debug command.");
 					break;
 			}
 		}
 
-		internal static void IgnoreUser(DiscordClient client, CommandInfo info, DiscordMember member,
-			DiscordChannelBase channel)
+		internal static async Task IgnoreUser(CommandInfo info, User member, Channel channel)
 		{
 			if (!info.HasArguments)
 			{
 				Utilities.WriteLog(member, "tried to ignore, but forgot to say who to ignore.");
-				client.SendMessageToRoom("You must specify who to ignore.", channel);
+				await channel.SendMessage("You must specify who to ignore.");
 				return;
 			}
 
-			var user = info.Arguments.First().GetMemberFromMention(client, channel);
+			var user = info.Arguments.First().GetMemberFromMention(channel);
 
-			if (ToggleIgnore(member.ID, channel.ID))
+			if (ToggleIgnore(member.Id, channel.Id))
 			{
-				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()} on channel {channel.GetName()}");
-				client.SendMessageToRoom($"Now ignoring {user.MakeMention()} on this channel.", channel);
+				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()} on channel {channel.Name}");
+				await channel.SendMessage($"Now ignoring {user.MakeMention()} on this channel.");
 			}
 			else
 			{
-				Utilities.WriteLog(member, $"unignored {user.GetFullUsername()} on channel {channel.GetName()}");
-				client.SendMessageToRoom($"No longer ignoring {user.MakeMention()} on this channel.", channel);
+				Utilities.WriteLog(member, $"unignored {user.GetFullUsername()} on channel {channel.Name}");
+				await channel.SendMessage($"No longer ignoring {user.MakeMention()} on this channel.");
 			}
 		}
 
-		internal static void GlobalIgnoreUser(DiscordClient client, CommandInfo info, DiscordMember member,
-			DiscordChannelBase channel)
+		internal static async Task GlobalIgnoreUser(CommandInfo info, User member, Channel channel)
 		{
 			if (!info.HasArguments)
 			{
 				Utilities.WriteLog(member, "tried to ignore, but forgot to say who to ignore.");
-				client.SendMessageToRoom("You must specify who to ignore.", channel);
+				await channel.SendMessage("You must specify who to ignore.");
 				return;
 			}
 
-			var user = info.Arguments.First().GetMemberFromMention(client, channel);
+			var user = info.Arguments.First().GetMemberFromMention(channel);
 
-			if (ToggleIgnore(member.ID))
+			if (ToggleIgnore(member.Id))
 			{
 				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()} globally.");
-				client.SendMessageToRoom($"Now ignoring {user.MakeMention()} everywhere.", channel);
+				await channel.SendMessage($"Now ignoring {user.MakeMention()} everywhere.");
 			}
 			else
 			{
 				Utilities.WriteLog(member, $"unignored {user.GetFullUsername()} globally.");
-				client.SendMessageToRoom($"No longer ignoring {user.MakeMention()} everywhere (unless specifically ignored elsewhere).", channel);
+				await channel.SendMessage($"No longer ignoring {user.MakeMention()} everywhere (unless specifically ignored elsewhere).");
 			}
 		}
 
@@ -177,7 +174,7 @@ namespace XenoBot2.Commands
 		/// <param name="uid">The user ID to toggle ignore for.</param>
 		/// <param name="chid">The channel ID to ignore on. Omit for global.</param>
 		/// <returns>True if user is now ignored, false if not.</returns>
-		private static bool ToggleIgnore(string uid, string chid = "*")
+		private static bool ToggleIgnore(ulong uid, ulong chid = 0)
 		{
 			var ignored = Utilities.Permitted(UserFlag.Ignored, uid);
 			if (ignored)

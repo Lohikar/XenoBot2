@@ -4,8 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using DiscordSharp;
-using DiscordSharp.Objects;
+using Discord;
 
 namespace XenoBot2.Shared
 {
@@ -77,9 +76,9 @@ namespace XenoBot2.Shared
 			return builder.ToString();
 		}
 
-		public static string MakeMention(this DiscordMember target) => $"<@{target.ID}>";
+		public static string MakeMention(this User target) => $"<@{target.Id}>";
 
-		public static string GetFullUsername(this DiscordMember target) => $"{target.Username}#{target.Discriminator}";
+		public static string GetFullUsername(this User target) => $"{target.NicknameMention}";
 
 		/// <summary>
 		///     Returns a random string from a list of strings.
@@ -119,14 +118,10 @@ namespace XenoBot2.Shared
 		/// </summary>
 		public static bool LessThan<T>(this ICollection<T> source, int num) => source.Count < num;
 
-		public static string GetName(this DiscordChannelBase channel)
-		{
-			if (!channel.Private) return ((DiscordChannel) channel).Name;
-			var e = (DiscordPrivateChannel) channel;
-			return $"PM::{e.Recipient.Username}#{e.Recipient.Discriminator}";
-		}
+		[Obsolete]
+		public static string GetName(this Channel channel) => channel.Name;
 
-		public static DiscordMember GetMemberFromMention(this string src, DiscordClient client, DiscordChannelBase channel)
-			=> client.GetMemberFromChannel(channel, src.Replace("<@!", "").Replace("<@", "").Replace(">", ""));
+		public static User GetMemberFromMention(this string src, Channel channel)
+			=> channel.GetUser(uint.Parse(src.Replace("<@!", "").Replace("<@", "").Replace(">", "")));
 	}
 }

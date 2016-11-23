@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Text;
 using System.Threading;
-using DiscordSharp;
-using DiscordSharp.Objects;
+using System.Threading.Tasks;
+using Discord;
 using XenoBot2.Data;
 using XenoBot2.Shared;
 
@@ -14,7 +14,7 @@ namespace XenoBot2.Commands
 	/// </summary>
 	internal static class Base
 	{
-		internal static void Help(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
+		internal static async Task Help(CommandInfo info, User author, Channel channel)
 		{
 			if (!info.HasArguments)
 			{
@@ -22,7 +22,7 @@ namespace XenoBot2.Commands
 
 				Action<string> send = s =>
 				{
-					client.SendMessageToUser(s, author);
+					channel.SendMessage(s);
 					Thread.Sleep(100);
 				};
 
@@ -56,7 +56,7 @@ namespace XenoBot2.Commands
 				if (string.IsNullOrEmpty(cmdmeta.LongHelpText))
 				{
 					Utilities.WriteLog(author, $"requested non-existent help page '{info.Arguments[0]}'");
-					client.SendMessageToUser("That page does not exist.", author);
+					await channel.SendMessage("That page does not exist.");
 				}
 				else
 				{
@@ -65,7 +65,7 @@ namespace XenoBot2.Commands
 					builder.AppendLine($"Help - {info.Arguments[0]}\n```");
 					builder.AppendLine(cmdmeta.LongHelpText);
 					builder.AppendLine("```");
-					client.SendMessageToUser(builder.ToString(), author);
+					await channel.SendMessage(builder.ToString());
 				}
 			}
 		}
@@ -96,10 +96,10 @@ namespace XenoBot2.Commands
 			return builder.ToString();
 		}
 
-		internal static void Version(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
+		internal static async Task Version(CommandInfo info, User author, Channel channel)
 		{
 			Utilities.WriteLog(author, "requested bot version.");
-			client.SendMessageToRoom($"XenoBot2 v{Utilities.GetVersion()}", channel);
+			await channel.SendMessage($"XenoBot2 v{Utilities.GetVersion()}");
 		}
 	}
 }

@@ -3,19 +3,21 @@ using System.Collections.Generic;
 
 namespace XenoBot2
 {
-	internal class UserDataStore<T>
+	internal class UserDataStore<TK1, TK2, TV>
 	{
-		private readonly Dictionary<Tuple<string, string>, T> _data;
+		private readonly Dictionary<Tuple<TK1, TK2>, TV> _data;
 
-		public UserDataStore(T defaultValue)
+		public UserDataStore(TV defaultValue, TK2 globalValue)
 		{
 			DefaultValue = defaultValue;
-			_data = new Dictionary<Tuple<string, string>, T>();
+			GlobalValue = globalValue;
+			_data = new Dictionary<Tuple<TK1, TK2>, TV>();
 		}
 
-		public T DefaultValue { get; }
+		public TV DefaultValue { get; }
+		public TK2 GlobalValue { get; }
 
-		public T this[string firstKey, string secondKey]
+		public TV this[TK1 firstKey, TK2 secondKey]
 		{
 			get
 			{
@@ -31,14 +33,14 @@ namespace XenoBot2
 					_data[id] = value;
 
 				// no point storing values that are default
-				if (EqualityComparer<T>.Default.Equals(value, DefaultValue))
+				if (EqualityComparer<TV>.Default.Equals(value, DefaultValue))
 					_data.Remove(id);
 			}
 		}
 
-		public T this[string firstKey] => this[firstKey, "*"];
+		public TV this[TK1 firstKey] => this[firstKey, GlobalValue];
 
-		public void Add(string firstKey, string secondKey, T value)
+		public void Add(TK1 firstKey, TK2 secondKey, TV value)
 		{
 			var id = MakeId(firstKey, secondKey);
 			if (_data.ContainsKey(id))
@@ -48,12 +50,12 @@ namespace XenoBot2
 			_data.Add(id, value);
 		}
 
-		public void Remove(string firstKey, string secondKey)
+		public void Remove(TK1 firstKey, TK2 secondKey)
 		{
 			_data.Remove(MakeId(firstKey, secondKey));
 		}
 
-		private static Tuple<string, string> MakeId(string memberId, string channelId)
-			=> new Tuple<string, string>(memberId, channelId);
+		private static Tuple<TK1, TK2> MakeId(TK1 memberId, TK2 channelId)
+			=> new Tuple<TK1, TK2>(memberId, channelId);
 	}
 }

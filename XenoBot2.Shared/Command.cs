@@ -1,5 +1,5 @@
-﻿using DiscordSharp;
-using DiscordSharp.Objects;
+﻿using System.Threading.Tasks;
+using Discord;
 
 namespace XenoBot2.Shared
 {
@@ -43,6 +43,5 @@ namespace XenoBot2.Shared
 		public RunnableCommand Definition;
 	}
 
-	public delegate void RunnableCommand(
-		DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel);
+	public delegate Task RunnableCommand(CommandInfo info, User member, Channel channel);
 }

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscordSharp.Objects;
+using Discord;
 using XenoBot2.Shared;
 
 namespace XenoBot2
 {
 	internal static class CommandParser
 	{
-		public static Tuple<CommandInfo, Command> ParseCommand(string commandline, DiscordChannelBase channelContext)
+		public static Tuple<CommandInfo, Command> ParseCommand(string commandline, Channel channelContext)
 		{
 			var chunks = commandline.Split(' ');
 			var cmdinfo = new CommandInfo();
@@ -22,7 +22,7 @@ namespace XenoBot2
 
 			cmdinfo.Arguments = chunks.AtLeast(2) ? chunks.Skip(1).ToList() : new List<string>();
 
-			var state = SharedData.CommandState[cmd, channelContext.ID];
+			var state = SharedData.CommandState[cmd, channelContext.Id];
 			if (!CommandStore.Commands.Contains(cmd))
 				state |= CommandState.DoesNotExist;
 			cmdinfo.State = state;
