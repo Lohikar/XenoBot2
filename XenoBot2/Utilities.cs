@@ -19,9 +19,12 @@ namespace XenoBot2
 			=> command.AliasFor == null ? command : CommandStore.Commands[command.AliasFor];
 
 		internal static bool Permitted(UserFlag flag, DiscordMember member, DiscordChannelBase channel = null)
+			=> Permitted(flag, member.ID, channel?.ID);
+
+		internal static bool Permitted(UserFlag flag, string member, string channel = null)
 		{
-			var channelData = channel != null ? SharedData.UserFlags[member.ID, channel.ID] : UserFlag.None;
-			var globalData = SharedData.UserFlags[member.ID];
+			var channelData = channel != null ? SharedData.UserFlags[member, channel] : UserFlag.None;
+			var globalData = SharedData.UserFlags[member];
 
 			return ((channelData | globalData) & flag) == flag;
 		}

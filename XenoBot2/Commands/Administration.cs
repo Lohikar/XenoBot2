@@ -135,18 +135,57 @@ namespace XenoBot2.Commands
 
 			var user = info.Arguments.First().GetMemberFromMention(client, channel);
 
-			if (Utilities.Permitted(UserFlag.Ignored, member))
+			if (ToggleIgnore(member.ID, channel.ID))
 			{
-				Utilities.WriteLog(member, $"unignored {user.GetFullUsername()}");
-				SharedData.UserFlags[user.ID, "*"] ^= UserFlag.Ignored;
-				client.SendMessageToRoom($"Unignored {user.MakeMention()}.", channel);
+				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()} on channel {channel.GetName()}");
+				client.SendMessageToRoom($"Now ignoring {user.MakeMention()} on this channel.", channel);
 			}
 			else
 			{
-				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()}");
-				SharedData.UserFlags[user.ID, "*"] |= UserFlag.Ignored;
-				client.SendMessageToRoom($"Ignored {user.MakeMention()}.", channel);
+				Utilities.WriteLog(member, $"unignored {user.GetFullUsername()} on channel {channel.GetName()}");
+				client.SendMessageToRoom($"No longer ignoring {user.MakeMention()} on this channel.", channel);
 			}
+		}
+
+		internal static void GlobalIgnoreUser(DiscordClient client, CommandInfo info, DiscordMember member,
+			DiscordChannelBase channel)
+		{
+			if (!info.HasArguments)
+			{
+				Utilities.WriteLog(member, "tried to ignore, but forgot to say who to ignore.");
+				client.SendMessageToRoom("You must specify who to ignore.", channel);
+				return;
+			}
+
+			var user = info.Arguments.First().GetMemberFromMention(client, channel);
+
+			if (ToggleIgnore(member.ID))
+			{
+				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()} globally.");
+				client.SendMessageToRoom($"Now ignoring {user.MakeMention()} everywhere.", channel);
+			}
+			else
+			{
+				Utilities.WriteLog(member, $"unignored {user.GetFullUsername()} globally.");
+				client.SendMessageToRoom($"No longer ignoring {user.MakeMention()} everywhere (unless specifically ignored elsewhere).", channel);
+			}
+		}
+
+		/// <summary>
+		///		Toggles the ignore state for a user, globally or per-channel.
+		/// </summary>
+		/// <param name="uid">The user ID to toggle ignore for.</param>
+		/// <param name="chid">The channel ID to ignore on. Omit for global.</param>
+		/// <returns>True if user is now ignored, false if not.</returns>
+		private static bool ToggleIgnore(string uid, string chid = "*")
+		{
+			var ignored = Utilities.Permitted(UserFlag.Ignored, uid);
+			if (ignored)
+				SharedData.UserFlags[uid, chid] ^= UserFlag.Ignored;
+			else
+				SharedData.UserFlags[uid, chid] |= UserFlag.Ignored;
+
+			return !ignored;
 		}
 	}
 }

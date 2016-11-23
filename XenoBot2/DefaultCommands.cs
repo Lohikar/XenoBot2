@@ -195,9 +195,19 @@ namespace XenoBot2
 				{
 					HelpCategory = "Core",
 					Permission = UserFlag.Moderator,
-					Flags = CommandFlag.UsableWhileIgnored,
+					Flags = CommandFlag.UsableWhileIgnored | CommandFlag.NoPrivateChannel,
 					Definition = Commands.Administration.IgnoreUser,
 					HelpText = "Toggles command ignore for a user."
+				}
+			},
+			{
+				"globalignore", new Command
+				{
+					HelpCategory = "Core",
+					Permission = UserFlag.BotAdministrator,
+					Flags = CommandFlag.NonDisableable | CommandFlag.UsableWhileIgnored,
+					Definition = Commands.Administration.GlobalIgnoreUser,
+					HelpText = "Toggles command ignore for a user on all channels."
 				}
 			}
 		};
