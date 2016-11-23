@@ -52,9 +52,10 @@ namespace XenoBot2.Commands
 
 		internal static void BotDebug(DiscordClient client, CommandInfo info, DiscordMember member, DiscordChannelBase channel)
 		{
-			if (Utilities.Permitted(UserFlag.BotDebug, member))
+			if (!Utilities.Permitted(UserFlag.BotDebug, member))
 			{
 				Utilities.WriteLog($"WARN: non-admin client '{member.GetFullUsername()}' ran $debug.");
+				return;
 			}
 
 			if (!info.HasArguments)
