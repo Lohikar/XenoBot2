@@ -1,7 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord;
+using Humanizer;
 using XenoBot2.Shared;
 
 namespace XenoBot2.Commands
@@ -15,6 +16,7 @@ namespace XenoBot2.Commands
 		{
 			Utilities.WriteLog(author, "is shutting down the bot.");
 			await channel.SendMessage("Bot shutting down.");
+			Thread.Sleep(1.Seconds());
 			await Program.BotInstance.Exit();
 		}
 

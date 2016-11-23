@@ -88,7 +88,6 @@
     <Compile Include="Commands\Utility.cs" />
     <Compile Include="Data\CommandData.cs" />
     <Compile Include="Data\Messages.cs" />
-    <Compile Include="InvalidCommandException.cs" />
     <Compile Include="NonBlockingConsole.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

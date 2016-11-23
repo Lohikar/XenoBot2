@@ -24,6 +24,6 @@ namespace XenoBot2.Shared
 		/// <summary>
 		///		The definition of the command.
 		/// </summary>
-		public Command Cmd { get; set; }
+		public Command BoundCommand { get; set; }
 	}
 }

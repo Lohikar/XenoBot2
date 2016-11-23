@@ -29,7 +29,7 @@ namespace XenoBot2
 			if (state.HasFlag(CommandState.Disabled) || state.HasFlag(CommandState.DoesNotExist))
 				return cmdinfo;
 
-			cmdinfo.Cmd = Program.BotInstance.Commands[cmd].ResolveCommand();
+			cmdinfo.BoundCommand = Program.BotInstance.Commands[cmd].ResolveCommand();
 			return cmdinfo;
 		}
 	}
