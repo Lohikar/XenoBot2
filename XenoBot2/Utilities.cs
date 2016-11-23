@@ -16,7 +16,7 @@ namespace XenoBot2
 		/// <param name="command">The command to resolve the alias for.</param>
 		/// <returns>A resolved alias or the passed <see cref="Command" /> if there was no defined alias.</returns>
 		internal static Command ResolveCommand(this Command command)
-			=> command.AliasFor == null ? command : CommandStore.Commands[command.AliasFor];
+			=> command.AliasFor == null ? command : Program.BotInstance.Commands[command.AliasFor];
 
 		internal static bool Permitted(UserFlag flag, User member, Channel channel = null)
 			=> Permitted(flag, member.Id, channel?.Id);

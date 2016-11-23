@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Discord;
 using XenoBot2.Shared;
 
@@ -25,7 +21,7 @@ namespace XenoBot2.Commands
 				await channel.SendMessage("Error: Command is not defined");
 				return;
 			}
-			var cmddata = CommandStore.Commands[cmd.Item1.CommandText].ResolveCommand();
+			var cmddata = Program.BotInstance.Commands[cmd.Item1.CommandText].ResolveCommand();
 			await channel.SendMessage($"Input: {cmdtxt}\n" +
 									 "```\n" +
 									 $"CmdText: {cmd.Item1.CommandText}\n" +
@@ -39,11 +35,13 @@ namespace XenoBot2.Commands
 
 		internal static async Task GetChannelInfo(CommandInfo info, User author, Channel channel)
 		{
-			Utilities.WriteLog(author, "requested the channel ID.");
-			await channel.SendMessage($"ID: {channel.Id}\n" +
+			Utilities.WriteLog(author, "requested channel info.");
+			await channel.SendMessage("```\n" +
+			                          $"ID: {channel.Id}\n" +
 			                          $"Name{channel.Name}" +
 			                          $"Private: {channel.IsPrivate}\n" +
-			                          $"Topic: {channel.Topic}\n");
+			                          $"Topic: {channel.Topic}\n" +
+			                          "```");
 		}
 	}
 }

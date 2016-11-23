@@ -75,6 +75,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BotCore.cs" />
     <Compile Include="CommandParser.cs" />
     <Compile Include="Commands\Debug.cs" />
     <Compile Include="UserDataStore.cs" />

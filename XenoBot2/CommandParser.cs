@@ -23,13 +23,13 @@ namespace XenoBot2
 			cmdinfo.Arguments = chunks.AtLeast(2) ? chunks.Skip(1).ToList() : new List<string>();
 
 			var state = Program.BotInstance.CommandStateData[cmd, channelContext.Id];
-			if (!CommandStore.Commands.Contains(cmd))
+			if (!Program.BotInstance.Commands.Contains(cmd))
 				state |= CommandState.DoesNotExist;
 			cmdinfo.State = state;
 			if (state.HasFlag(CommandState.Disabled) || state.HasFlag(CommandState.DoesNotExist))
 				return new Tuple<CommandInfo, Command>(cmdinfo, null);
 
-			return new Tuple<CommandInfo, Command>(cmdinfo, CommandStore.Commands[cmd].ResolveCommand());
+			return new Tuple<CommandInfo, Command>(cmdinfo, Program.BotInstance.Commands[cmd].ResolveCommand());
 		}
 	}
 }

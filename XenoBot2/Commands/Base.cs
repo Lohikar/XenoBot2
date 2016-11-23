@@ -33,7 +33,7 @@ namespace XenoBot2.Commands
 
 				var giter = 0;
 
-				var helpLines = from item in CommandStore.Commands
+				var helpLines = from item in Program.BotInstance.Commands
 								where isAdmin || !item.Value.Flags.HasFlag(CommandFlag.Hidden)
 								let num = giter++
 								group GenerateHelpEntry(item.Value, item.Key) by num / 10 into items
@@ -51,8 +51,8 @@ namespace XenoBot2.Commands
 			}
 			else
 			{
-				if (!CommandStore.Commands.Contains(info.Arguments[0])) return;
-				var cmdmeta = CommandStore.Commands[info.Arguments[0]].ResolveCommand();
+				if (!Program.BotInstance.Commands.Contains(info.Arguments[0])) return;
+				var cmdmeta = Program.BotInstance.Commands[info.Arguments[0]].ResolveCommand();
 				if (string.IsNullOrEmpty(cmdmeta.LongHelpText))
 				{
 					Utilities.WriteLog(author, $"requested non-existent help page '{info.Arguments[0]}'");

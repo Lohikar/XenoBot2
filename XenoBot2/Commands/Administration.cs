@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using Humanizer;
-using XenoBot2.Data;
 using XenoBot2.Shared;
 
 namespace XenoBot2.Commands
@@ -27,6 +25,11 @@ namespace XenoBot2.Commands
 				await channel.SendMessage("You must specify the command to enable.");
 				return;
 			}
+			if (Program.BotInstance.Commands[info.Arguments.First()].ResolveCommand().Flags.HasFlag(CommandFlag.NonDisableable))
+			{
+				await channel.SendMessage("That command cannot be disabled.");
+				return;
+			}
 			if (!Utilities.HasState(CommandState.Disabled, info.Arguments.First()))
 			{
 				await channel.SendMessage("That command is already enabled.");
@@ -41,6 +44,11 @@ namespace XenoBot2.Commands
 			if (!info.HasArguments)
 			{
 				await channel.SendMessage("You must specify the command to disable.");
+				return;
+			}
+			if (Program.BotInstance.Commands[info.Arguments.First()].ResolveCommand().Flags.HasFlag(CommandFlag.NonDisableable))
+			{
+				await channel.SendMessage("That command cannot be disabled.");
 				return;
 			}
 			if (Utilities.HasState(CommandState.Disabled, info.Arguments.First()))

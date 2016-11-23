@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using XenoBot2.Shared;
 
 namespace XenoBot2
 {
 	internal class CommandStore : IEnumerable<KeyValuePair<string,Command>>
 	{
-		public static CommandStore Commands;
-
 		private readonly IDictionary<string, Command> _commands;
 
 		public Command this[string id] => _commands[id.ToLower()];
