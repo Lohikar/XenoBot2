@@ -84,7 +84,6 @@
     <Compile Include="Commands\Administration.cs" />
     <Compile Include="Commands\Base.cs" />
     <Compile Include="Commands\Fun.cs" />
-    <Compile Include="Commands\FunOffensive.cs" />
     <Compile Include="Commands\Utility.cs" />
     <Compile Include="Data\CommandData.cs" />
     <Compile Include="Data\Messages.cs" />

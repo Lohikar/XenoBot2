@@ -93,13 +93,13 @@ namespace XenoBot2
 				{
 					HelpText = "Converts an integer into another format. Available formats: roman, words, wordord, metric.",
 					LongHelpText = "Arguments: format number [culture]\n" +
-								   "Converts an integer into another format.\n" +
-								   "Available formats:\n" +
-								   "* roman - Roman Numerals, i.e. \"XIV\"\n" +
-								   "* words - Words, i.e. \"twenty seven\"\n" +
-								   "* wordord - Words (ordinal), i.e. \"twenty seventh\"\n" +
-								   "* metric - Metric prefixed, i.e. \"200K\"\n" +
-								   "Optionally, a 2-letter culture code can be specified to get output in that language's format.",
+					               "Converts an integer into another format.\n" +
+					               "Available formats:\n" +
+					               "* roman - Roman Numerals, i.e. \"XIV\"\n" +
+					               "* words - Words, i.e. \"twenty seven\"\n" +
+					               "* wordord - Words (ordinal), i.e. \"twenty seventh\"\n" +
+					               "* metric - Metric prefixed, i.e. \"200K\"\n" +
+					               "Optionally, a 2-letter culture code can be specified to get output in that language's format.",
 					HelpCategory = "Utility",
 					Definition = Commands.Utility.ConvertNumber
 				}
@@ -127,17 +127,6 @@ namespace XenoBot2
 					HelpCategory = "CommandCategory.Base",
 					Definition = Commands.Base.Help,
 					Flags = CommandFlag.UsableWhileIgnored | CommandFlag.NonDisableable
-				}
-			},
-			{
-				"trump", new Command
-				{
-					HelpText = "MAKE HELP GREAT AGAIN!",
-					LongHelpText = "Prints a message in the form \"Make $THING great again!\"\n" +
-								   "If an argument is passed, $THING is replaced with the argument.\"\n" +
-								   "If no arguments are passed, 'bots' is used instead.",
-					HelpCategory = "Fun (Offensive)",
-					Definition = Commands.FunOffensive.Trump
 				}
 			},
 			{
