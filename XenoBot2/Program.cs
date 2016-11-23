@@ -13,6 +13,8 @@ namespace XenoBot2
 
 		public const char Prefix = '$';
 
+		public static async Task Exit() => await _client.Disconnect();
+
 		private static void Main(string[] args)
 		{
 			Utilities.WriteLog($"XenoBot2 v{Utilities.GetVersion()} starting initialization...");
@@ -49,6 +51,11 @@ namespace XenoBot2
 			{
 				if (!e.Message.IsAuthor)
 					await ParseMessage(e.User, e.Channel, e.Message.RawText);
+			};
+
+			_client.Ready += (s, e) =>
+			{
+				_client.SetGame($"v{Utilities.GetVersion()}");
 			};
 
 

@@ -15,16 +15,9 @@ namespace XenoBot2.Commands
 	{
 		internal static async Task HaltBot(CommandInfo info, User author, Channel channel)
 		{
-			if (Utilities.Permitted(UserFlag.BotAdministrator, author))
-			{
-				Utilities.WriteLog(author, "is shutting down the bot; is admin.");
-				await channel.SendMessage("Bot shutting down.");
-			}
-			else
-			{
-				Utilities.WriteLog(author, "attempted to shutdown bot, but is not admin.");
-				await channel.SendMessage("You are not the bot administrator.");
-			}
+			Utilities.WriteLog(author, "is shutting down the bot.");
+			await channel.SendMessage("Bot shutting down.");
+			await Program.Exit();
 		}
 
 		internal static async Task Enable(CommandInfo info, User member, Channel channel)
