@@ -58,19 +58,6 @@ namespace XenoBot2.Commands
 				await channel.SendMessage($"{info.Arguments[1]} is not a valid integer.");
 				return;
 			}
-			CultureInfo culture = null;
-			if (info.Arguments.AtLeast(3))
-			{
-				try
-				{
-					culture = new CultureInfo(info.Arguments[2]);
-				}
-				catch (CultureNotFoundException)
-				{
-					await channel.SendMessage("Unknown culture.");
-					return;
-				}
-			}
 			try
 			{
 				switch (info.Arguments[0])
@@ -80,7 +67,7 @@ namespace XenoBot2.Commands
 						break;
 
 					case "words":
-						await channel.SendMessage($"{number} in words is {number.ToWords(culture)}.");
+						await channel.SendMessage($"{number} in words is {number.ToWords()}.");
 						break;
 
 					case "metric":
@@ -88,7 +75,7 @@ namespace XenoBot2.Commands
 						break;
 
 					case "wordord":
-						await channel.SendMessage($"{number} is {number.ToOrdinalWords(culture)}.");
+						await channel.SendMessage($"{number} is {number.ToOrdinalWords()}.");
 						break;
 
 					default:
@@ -99,10 +86,6 @@ namespace XenoBot2.Commands
 			catch (ArgumentOutOfRangeException)
 			{
 				await channel.SendMessage("Error: number out of range.");
-			}
-			catch
-			{
-				await channel.SendMessage("This shouldn't happen; something broke.");
 			}
 		}
 

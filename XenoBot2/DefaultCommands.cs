@@ -56,7 +56,7 @@ namespace XenoBot2
 				}
 			},
 			{
-				"cat", new Command
+				"catfact", new Command
 				{
 					HelpText = "I would like to unsubscribe from cat facts.",
 					HelpCategory = "Fun",
@@ -216,6 +216,14 @@ namespace XenoBot2
 					Permission = UserFlag.BotDebug,
 					Flags = CommandFlag.NonDisableable,
 					Definition = Commands.Debug.GetChannelInfo
+				}
+			},
+			{
+				"cat", new Command
+				{
+					HelpCategory = "Fun",
+					Definition = Commands.Fun.RandomCat,
+					HelpText = "Meow."
 				}
 			}
 		};

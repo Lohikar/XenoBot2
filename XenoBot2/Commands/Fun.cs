@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Discord;
 using XenoBot2.Data;
 using XenoBot2.Shared;
+using Newtonsoft.Json.Linq;
 
 namespace XenoBot2.Commands
 {
@@ -26,7 +28,7 @@ namespace XenoBot2.Commands
 		internal static async Task CatFact(CommandInfo info, User author, Channel channel)
 		{
 			Utilities.WriteLog(author, "requested a cat fact.");
-			await channel.SendMessage($"Cat Fact: *{Shared.Utilities.GetStringFromWebService("https://cat-facts-as-a-service.appspot.com/fact")}*");
+			await channel.SendMessage($"Cat Fact: *{await Shared.Utilities.GetStringAsync("https://cat-facts-as-a-service.appspot.com/fact")}*");
 		}
 
 		internal static async Task EightBall(CommandInfo info, User author, Channel channel)
@@ -42,6 +44,15 @@ namespace XenoBot2.Commands
 				await channel.SendMessage($"*{Strings.EightBall.GetRandom()}*");
 			}
 			
+		}
+
+		internal static async Task RandomCat(CommandInfo info, User author, Channel channel)
+		{
+			using (var client = new WebClient())
+			{
+				dynamic result = JObject.Parse(await client.DownloadStringTaskAsync("http://random.cat/meow"));
+				await channel.SendMessage($"{author.NicknameMention}: {result.file}");
+			}
 		}
 	}
 }
