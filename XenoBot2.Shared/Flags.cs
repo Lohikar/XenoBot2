@@ -9,6 +9,9 @@ namespace XenoBot2.Shared
 		///		No permissions required.
 		/// </summary>
 		None = 0,
+		/// <summary>
+		///		User is ignored.
+		/// </summary>
 		Ignored = 1,
 		/// <summary>
 		///		Invoker must be able to speak in the affected channel.
@@ -23,15 +26,21 @@ namespace XenoBot2.Shared
 		/// </summary>
 		Administrator = 8,
 		/// <summary>
-		///		Invoker must be the bot administrator.
+		///		Invoker must be the bot administrator. Global permission.
 		/// </summary>
 		BotAdministrator = 16,
+		/// <summary>
+		///		Invoker must be allowed to debug the bot. Global permission.
+		/// </summary>
 		BotDebug = 32
 	}
 
 	[Flags]
 	public enum CommandFlag
 	{
+		/// <summary>
+		///		No flags set.
+		/// </summary>
 		None = 0,
 		/// <summary>
 		///		Command is disallowed in normal channels.
@@ -70,6 +79,9 @@ namespace XenoBot2.Shared
 		///		The command is hidden from help indexes in this context.
 		/// </summary>
 		Hidden = 2,
+		/// <summary>
+		///		The command does not exist.
+		/// </summary>
 		DoesNotExist = 4
 	}
 }
