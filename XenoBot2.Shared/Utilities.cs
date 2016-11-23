@@ -77,8 +77,6 @@ namespace XenoBot2.Shared
 			return builder.ToString();
 		}
 
-		public static Version GetVersion() => Assembly.GetExecutingAssembly().GetName().Version;
-
 		public static string MakeMention(this DiscordMember target) => $"<@{target.ID}>";
 
 		public static string GetFullUsername(this DiscordMember target) => $"{target.Username}#{target.Discriminator}";

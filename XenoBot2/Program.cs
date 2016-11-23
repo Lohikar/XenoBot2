@@ -24,7 +24,7 @@ namespace XenoBot2
 
 		private static void Main(string[] args)
 		{
-			Utilities.WriteLog($"XenoBot2 v{Shared.Utilities.GetVersion()} starting initialization...");
+			Utilities.WriteLog($"XenoBot2 v{Utilities.GetVersion()} starting initialization...");
 			// Initialize command storage
 			CommandStore.Commands = new CommandStore();
 			// load default commands
@@ -61,7 +61,7 @@ namespace XenoBot2
 			{
 				Utilities.WriteLog($"Logged in to Discord as {e.User.GetFullUsername()}");
 				Console.Title = $"{e.User.GetFullUsername()} - XenoBot";
-				_client.UpdateCurrentGame("Hiss");
+				_client.UpdateCurrentGame($"v{Utilities.GetVersion()}");
 			};
 			_client.MessageReceived += ParseMessageEventWrapper;
 			_client.PrivateMessageReceived += ParsePrivateMessage;

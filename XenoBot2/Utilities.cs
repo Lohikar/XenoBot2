@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using DiscordSharp;
 using DiscordSharp.Objects;
 using XenoBot2.Shared;
@@ -65,5 +66,7 @@ namespace XenoBot2
 		/// <param name="data">The message to write to the log.</param>
 		internal static void WriteLog(DiscordMember originClient, string data)
 			=> WriteLog($"Client {originClient.GetFullUsername()} {data}");
+
+		public static Version GetVersion() => Assembly.GetExecutingAssembly().GetName().Version;
 	}
 }
