@@ -27,8 +27,13 @@ namespace XenoBot2.Commands
 				await channel.SendMessage("You must specify the command to enable.");
 				return;
 			}
-			//if (Program.CombinedChannelCommandMgr.EnableCommand(info.Arguments.First(), channel))
-			//	client.SendMessageToRoom($"Enabled command '{info.Arguments.First()}'", channel);
+			if (!Utilities.HasState(CommandState.Disabled, info.Arguments.First()))
+			{
+				await channel.SendMessage("That command is already enabled.");
+				return;
+			}
+			await channel.SendMessage($"Enabled command '{info.Arguments.First()}' on this channel.");
+			Program.BotInstance.CommandStateData[info.Arguments.First(), channel.Id] ^= CommandState.Disabled;
 		}
 
 		internal static async Task Disable(CommandInfo info, User member, Channel channel)
@@ -38,81 +43,13 @@ namespace XenoBot2.Commands
 				await channel.SendMessage("You must specify the command to disable.");
 				return;
 			}
-			//if (Program.CombinedChannelCommandMgr.DisableCommand(info.Arguments.First(), channel))
-			//	client.SendMessageToRoom($"Disabled command '{info.Arguments.First()}'", channel);
-		}
-
-		internal static async Task BotDebug(CommandInfo info, User member, Channel channel)
-		{
-			if (!Utilities.Permitted(UserFlag.BotDebug, member))
+			if (Utilities.HasState(CommandState.Disabled, info.Arguments.First()))
 			{
-				Utilities.WriteLog($"WARN: non-admin client '{member.GetFullUsername()}' ran $debug.");
+				await channel.SendMessage("That command is already disabled.");
 				return;
 			}
-
-			if (!info.HasArguments)
-			{
-				await channel.SendMessage("Argument required.");
-				return;
-			}
-
-			switch (info.Arguments[0])
-			{
-				case "except":	// throws an exception 
-					throw new InvalidOperationException("$debug::except");
-				//case "cmsg":    // send message to channel
-				//	if (info.Arguments.LessThan(2))
-				//	{
-				//		await channel.SendMessage("not enough arguments");
-				//		break;
-				//	}
-				//	var id = long.Parse(info.Arguments[1]);
-				//	var msg = string.Join(" ", info.Arguments.Skip(2));
-				//	.SendMessageToChannel(msg, client.GetChannelByID(id));
-				//	client.SendMessageToUser("Sent message to channel.", member);
-				//	Utilities.WriteLog(member, $"sent message '{msg}' to channel '{client.GetChannelByID(id).GetName()}'");
-				//	break;
-				case "cid":		// get channel ID
-					await channel.SendMessage($"cid is {channel.Id}");
-					Utilities.WriteLog(member, $"requested channelID (CID) for channel {channel.Name}");
-					break;
-				case "cmdinfo":
-					if (!info.HasArguments)
-					{
-						await channel.SendMessage("not enough arguments");
-						break;
-					}
-					var cmdtxt = string.Join(" ", info.Arguments.Skip(1));
-					Utilities.WriteLog(member, $"requested cmdinfo for '{cmdtxt}'");
-					var cmd = CommandParser.ParseCommand(cmdtxt, channel);
-					if (cmd == null)
-					{
-						await channel.SendMessage("Error: Command is not defined");
-						return;
-					}
-					var cmddata = CommandStore.Commands[cmd.Item1.CommandText].ResolveCommand();
-					await channel.SendMessage($"Input: {cmdtxt}\n" +
-					                         "```\n" +
-					                         $"CmdText: {cmd.Item1.CommandText}\n" +
-					                         $"Flags: {cmddata.Flags}\n" +
-											 $"PermissionFlags: {cmddata.Permission}\n" +
-					                         $"Category: {cmddata.HelpCategory}\n" +
-					                         "```");
-					break;
-				//case "setgame":
-				//	if (!info.HasArguments)
-				//	{
-				//		await channel.SendMessage("not enough arguments");
-				//	}
-				//	var gametext = string.Join(" ", info.Arguments.Skip(1));
-				//	Utilities.WriteLog(member, $"set game to '{gametext}'");
-				//	client.UpdateCurrentGame(gametext);
-				//	break;
-				default:
-					await channel.SendMessage("That is not a valid sub-command.");
-					Utilities.WriteLog(member, "issued invalid debug command.");
-					break;
-			}
+			await channel.SendMessage($"Disabled command '{info.Arguments.First()}' on this channel.");
+			Program.BotInstance.CommandStateData[info.Arguments.First(), channel.Id] |= CommandState.Disabled;
 		}
 
 		internal static async Task IgnoreUser(CommandInfo info, User member, Channel channel)

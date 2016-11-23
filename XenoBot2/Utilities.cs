@@ -26,7 +26,15 @@ namespace XenoBot2
 			var channelData = channel != null ? Program.BotInstance.UserFlags[member, channel.Value] : UserFlag.None;
 			var globalData = Program.BotInstance.UserFlags[member];
 
-			return ((channelData | globalData) & flag) == flag;
+			return (channelData | globalData).HasFlag(flag);
+		}
+
+		internal static bool HasState(CommandState flag, string command, ulong? channel = null)
+		{
+			var channelData = channel != null ? Program.BotInstance.CommandStateData[command, channel.Value] : CommandState.None;
+			var globalData = Program.BotInstance.CommandStateData[command];
+
+			return (channelData | globalData).HasFlag(flag);
 		}
 
 		/// <summary>

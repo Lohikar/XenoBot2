@@ -30,6 +30,8 @@ namespace XenoBot2
 
 		public async Task Exit() => await _client.Disconnect();
 
+		public void SetGame(string game) => _client.SetGame(game);
+
 		public async Task Initialize()
 		{
 			Utilities.WriteLog($"XenoBot2 v{Utilities.GetVersion()} starting initialization...");
@@ -40,7 +42,7 @@ namespace XenoBot2
 			CommandStateData = new UserDataStore<string, ulong, CommandState>(CommandState.None, 0);
 			UserFlags = new UserDataStore<ulong, ulong, UserFlag>(UserFlag.User, 0);
 
-			UserFlags.Add(174018252161286144, UserFlags.GlobalValue, UserFlag.BotAdministrator);
+			UserFlags.Add(174018252161286144, UserFlags.GlobalValue, UserFlag.BotAdministrator | UserFlag.BotDebug);
 
 			Utilities.WriteLog("Loading API key from disk...");
 
@@ -107,16 +109,8 @@ namespace XenoBot2
 
 			// Process command & execute
 			var cmd = CommandParser.ParseCommand(text, channel);
-			if (cmd.Item1.State.HasFlag(CommandState.DoesNotExist))
-				return;
-			if (cmd.Item2 == null)
-			{
-				Utilities.WriteLog(string.Format(Messages.CommandNotDefined, cmd.Item1));
-				await channel.SendMessage($"The command '{cmd.Item1}' seems to be broken right now.");
-				return;
-			}
-			if ((cmd.Item2.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.IsPrivate) ||
-				cmd.Item2.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.IsPrivate)
+			if (cmd.Item1.State.HasFlag(CommandState.DoesNotExist) || cmd.Item2 == null) return;
+			if ((cmd.Item2.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.IsPrivate) || cmd.Item2.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.IsPrivate)
 			{
 				await channel.SendMessage("That command cannot be used here.");
 				return;

@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandParser.cs" />
+    <Compile Include="Commands\Debug.cs" />
     <Compile Include="UserDataStore.cs" />
     <Compile Include="DefaultCommands.cs" />
     <Compile Include="CommandStore.cs" />

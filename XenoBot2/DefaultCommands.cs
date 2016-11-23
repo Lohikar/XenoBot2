@@ -181,16 +181,6 @@ namespace XenoBot2
 				}
 			},
 			{
-				"!debug", new Command
-				{
-					HelpCategory = "Core",
-					Permission = UserFlag.BotDebug,
-					Definition = Commands.Administration.BotDebug,
-					Flags = CommandFlag.NonDisableable | CommandFlag.Hidden,
-					HelpText = "Miscellaneous debugging commands."
-				}
-			},
-			{
 				"ignore", new Command
 				{
 					HelpCategory = "Core",
@@ -208,6 +198,24 @@ namespace XenoBot2
 					Flags = CommandFlag.NonDisableable | CommandFlag.UsableWhileIgnored,
 					Definition = Commands.Administration.GlobalIgnoreUser,
 					HelpText = "Toggles command ignore for a user on all channels."
+				}
+			},
+			{
+				"!cmdinfo", new Command
+				{
+					HelpCategory = "Debug",
+					Permission = UserFlag.BotDebug,
+					Flags = CommandFlag.NonDisableable,
+					Definition = Commands.Debug.Cmdinfo
+				}
+			},
+			{
+				"!chinfo", new Command
+				{
+					HelpCategory = "Debug",
+					Permission = UserFlag.BotDebug,
+					Flags = CommandFlag.NonDisableable,
+					Definition = Commands.Debug.GetChannelInfo
 				}
 			}
 		};
