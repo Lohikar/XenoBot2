@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using Discord;
-using Humanizer;
 using XenoBot2.Data;
 using XenoBot2.Shared;
 
