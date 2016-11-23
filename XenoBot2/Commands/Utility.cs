@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using DiscordSharp;
 using DiscordSharp.Objects;
 using Humanizer;
@@ -35,17 +36,13 @@ namespace XenoBot2.Commands
 		}
 
 		private static string GetInfoString(DiscordMember author, DiscordChannelBase channel)
-			=> $"Information about: **{author.Username}#{author.Discriminator}**\n" +
+			=> $"Information about: **{author.GetFullUsername()}**\n" +
 			   "```\n" +
-			   $"ID:\t{author.ID}\n" +
-			   $"Bot:\t{author.IsBot}\n" +
-			   $"Verified:\t{author.Verified}\n" +
-			   $"CurrentGame:\t{author.CurrentGame ?? "{null}"}\n" +
-			   $"Status:\t{author.Status}\n" +
-			   $"Deaf:\t{author.Deaf}\n" +
-			   $"Avatar:\t{author.GetAvatarURL()}\n" +
-			   $"Permissions (Channel): {SharedData.UserFlags[author.ID, channel.ID]}\n" +
-			   $"Permissions (Global): {SharedData.UserFlags[author.ID]}" +
+			   $"ID:                   {author.ID}\n" +
+			   $"Bot:                  {author.IsBot}\n" +
+			   $"Avatar:               {author.GetAvatarURL()}\n" +
+			   $"User Flags (Channel): {SharedData.UserFlags[author.ID, channel.ID]}\n" +
+			   $"User Flags (Global):  {SharedData.UserFlags[author.ID]}" +
 			   "```";
 
 		internal static void ConvertNumber(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
@@ -113,7 +110,7 @@ namespace XenoBot2.Commands
 		{
 			var author = !info.HasArguments 
 				? member 
-				: info.Arguments[0].GetMemberFromMention(client, channel);
+				: info.Arguments.First().GetMemberFromMention(client, channel);
 			if (author == null)
 			{
 				client.SendMessageToRoom("User does not exist.", channel);

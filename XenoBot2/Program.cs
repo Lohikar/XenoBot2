@@ -16,7 +16,7 @@ namespace XenoBot2
 		//internal static CombinedChannelCommandManager CombinedChannelCommandMgr;
 		private static bool _exit;
 		private static Thread _clientThread;
-		private static bool noReconnect = false;
+		private static bool _noReconnect = false;
 
 		public const char Prefix = '$';
 
@@ -66,11 +66,11 @@ namespace XenoBot2
 			_client.MessageReceived += ParseMessageEventWrapper;
 			_client.PrivateMessageReceived += ParsePrivateMessage;
 			_client.MentionReceived += ClientMentioned;
-			//_client.UserAddedToServer += UserJoin;
-			//_client.UserRemovedFromServer += UserLeave;
+			_client.UserAddedToServer += UserJoin;
+			_client.UserRemovedFromServer += UserLeave;
 			_client.SocketClosed += (sender, e) =>
 			{
-				if (noReconnect) return;
+				if (_noReconnect) return;
 				// something went wrong and the socket got closed, attempt reconnect
 				// TODO: More intelligent reconnection
 				NonBlockingConsole.WriteLine("ERROR: !! DISCONNECTED FROM DISCORD !!");
@@ -100,7 +100,9 @@ namespace XenoBot2
 					break;
 			}
 
-			noReconnect = true;
+			_client.UpdateCurrentGame("Offline");
+
+			_noReconnect = true;
 
 			_client.Logout();
 		}
@@ -108,9 +110,7 @@ namespace XenoBot2
 		private static void Connect(out Thread clientThread, DiscordClient client)
 		{
 			client.SendLoginRequest();
-
 			clientThread = new Thread(client.Connect);
-
 			clientThread.Start();
 		}
 
@@ -127,28 +127,24 @@ namespace XenoBot2
 		}
 
 		private static void ClientMentioned(object sender, DiscordMessageEventArgs e)
-		{
-			if (CheckBotIgnore(e.Author)) return;
-			Utilities.WriteLog(e.Author, Messages.MentionedMe);
-			_client.SendMessageToChannel(Messages.XenomorphHiss, e.Channel);
-		}
+			 => ParseMessage(e.Author, e.Channel, e.MessageText.Replace(_client.Me.MakeMention(), "").Trim(), true);
 
-		private static void ParsePrivateMessage(object sender, DiscordPrivateMessageEventArgs e) =>
-			ParseMessage(e.Author, e.Channel, e.Message.Trim());
+		private static void ParsePrivateMessage(object sender, DiscordPrivateMessageEventArgs e)
+			 => ParseMessage(e.Author, e.Channel, e.Message.Trim());
 		
 
-		private static void ParseMessageEventWrapper(object sender, DiscordMessageEventArgs e) =>
-			ParseMessage(e.Author, e.Channel, e.MessageText);
+		private static void ParseMessageEventWrapper(object sender, DiscordMessageEventArgs e)
+			 => ParseMessage(e.Author, e.Channel, e.MessageText);
 		
 
-		private static void ParseMessage(DiscordMember author, DiscordChannelBase channel, string messageText)
+		private static void ParseMessage(DiscordMember author, DiscordChannelBase channel, string messageText, bool skipPrefix = false)
 		{
 			// silently ignore our own messages & messages from other bots
 			if (CheckBotIgnore(author) ||
 				string.IsNullOrWhiteSpace(messageText) ||
-				messageText[0] != Prefix) return;
+				(messageText[0] != Prefix && !skipPrefix)) return;
 
-			var text = messageText.Substring(1);
+			var text = skipPrefix ? messageText : messageText.Substring(1);
 
 			// Process command & execute
 			var cmd = CommandParser.ParseCommand(text, channel);
