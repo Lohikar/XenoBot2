@@ -92,25 +92,25 @@ namespace XenoBot2
 		private static async Task ParseMessage(User author, Channel channel, string messageText, bool skipPrefix = false)
 		{
 			// silently ignore our own messages & messages from other bots
-			if (String.IsNullOrWhiteSpace(messageText) ||
+			if (string.IsNullOrWhiteSpace(messageText) ||
 			    (messageText[0] != Prefix && !skipPrefix)) return;
 
 			var text = skipPrefix ? messageText : messageText.Substring(1);
 
 			// Process command & execute
 			var cmd = CommandParser.ParseCommand(text, channel);
-			if (cmd.Item1.State.HasFlag(CommandState.DoesNotExist) || cmd.Item2 == null) return;
-			if ((cmd.Item2.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.IsPrivate) || cmd.Item2.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.IsPrivate)
+			if (cmd.State.HasFlag(CommandState.DoesNotExist) || cmd.Cmd == null) return;
+			if ((cmd.Cmd.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.IsPrivate) || cmd.Cmd.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.IsPrivate)
 			{
 				await channel.SendMessage("That command cannot be used here.");
 				return;
 			}
-			if (!cmd.Item2.Flags.HasFlag(CommandFlag.UsableWhileIgnored) && Utilities.Permitted(UserFlag.Ignored, author))
+			if (!cmd.Cmd.Flags.HasFlag(CommandFlag.UsableWhileIgnored) && Utilities.Permitted(UserFlag.Ignored, author))
 				return;
 			try
 			{
 				// execute command
-				await cmd.Item2.Definition(cmd.Item1, author, channel);
+				await cmd.Cmd.Definition(cmd, author, channel);
 			}
 			catch (InvalidCommandException ex)
 			{
@@ -119,9 +119,9 @@ namespace XenoBot2
 			}
 			catch (Exception ex)
 			{
-				Utilities.WriteLog($"An exception occurred during execution of command '{cmd.Item1.CommandText}'," +
-				                   $" args '{String.Join(", ", cmd.Item1.Arguments)}'.\n" + ex.Message);
-				await channel.SendMessage($"An internal error occurred running command '{cmd.Item1.CommandText}'.");
+				Utilities.WriteLog($"An exception occurred during execution of command '{cmd.CommandText}'," +
+				                   $" args '{string.Join(", ", cmd.Arguments)}'.\n" + ex.Message);
+				await channel.SendMessage($"An internal error occurred running command '{cmd.CommandText}'.");
 			}
 		}
 	}

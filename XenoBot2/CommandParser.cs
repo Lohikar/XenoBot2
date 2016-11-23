@@ -8,7 +8,7 @@ namespace XenoBot2
 {
 	internal static class CommandParser
 	{
-		public static Tuple<CommandInfo, Command> ParseCommand(string commandline, Channel channelContext)
+		public static CommandInfo ParseCommand(string commandline, Channel channelContext)
 		{
 			var chunks = commandline.Split(' ');
 			var cmdinfo = new CommandInfo();
@@ -27,9 +27,10 @@ namespace XenoBot2
 				state |= CommandState.DoesNotExist;
 			cmdinfo.State = state;
 			if (state.HasFlag(CommandState.Disabled) || state.HasFlag(CommandState.DoesNotExist))
-				return new Tuple<CommandInfo, Command>(cmdinfo, null);
+				return cmdinfo;
 
-			return new Tuple<CommandInfo, Command>(cmdinfo, Program.BotInstance.Commands[cmd].ResolveCommand());
+			cmdinfo.Cmd = Program.BotInstance.Commands[cmd].ResolveCommand();
+			return cmdinfo;
 		}
 	}
 }

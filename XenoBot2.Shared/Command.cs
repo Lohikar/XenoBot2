@@ -40,7 +40,7 @@ namespace XenoBot2.Shared
 		/// <summary>
 		///		The function to execute when the command is called by a user.
 		/// </summary>
-		public RunnableCommand Definition;
+		public RunnableCommand Definition { get; set; }
 	}
 
 	public delegate Task RunnableCommand(CommandInfo info, User member, Channel channel);

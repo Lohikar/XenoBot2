@@ -21,5 +21,9 @@ namespace XenoBot2.Shared
 		///		The current state of this <see cref="CommandInfo"/>'s associated <see cref="Command"/>.
 		/// </summary>
 		public CommandState State { get; set; }
+		/// <summary>
+		///		The definition of the command.
+		/// </summary>
+		public Command Cmd { get; set; }
 	}
 }

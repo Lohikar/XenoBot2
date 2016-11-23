@@ -21,10 +21,10 @@ namespace XenoBot2.Commands
 				await channel.SendMessage("Error: Command is not defined");
 				return;
 			}
-			var cmddata = Program.BotInstance.Commands[cmd.Item1.CommandText].ResolveCommand();
+			var cmddata = Program.BotInstance.Commands[cmd.CommandText].ResolveCommand();
 			await channel.SendMessage($"Input: {cmdtxt}\n" +
 									 "```\n" +
-									 $"CmdText: {cmd.Item1.CommandText}\n" +
+									 $"CmdText: {cmd.CommandText}\n" +
 									 $"Flags: {cmddata.Flags}\n" +
 									 $"LocalState: {Program.BotInstance.CommandStateData[cmdtxt, channel.Id]}\n" +
 									 $"GlobalState: {Program.BotInstance.CommandStateData[cmdtxt]}\n" +
