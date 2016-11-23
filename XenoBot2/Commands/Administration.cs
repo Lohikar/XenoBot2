@@ -136,12 +136,12 @@ namespace XenoBot2.Commands
 			if (ToggleIgnore(member.Id, channel.Id))
 			{
 				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()} on channel {channel.Name}");
-				await channel.SendMessage($"Now ignoring {user.MakeMention()} on this channel.");
+				await channel.SendMessage($"Now ignoring {user.NicknameMention} on this channel.");
 			}
 			else
 			{
 				Utilities.WriteLog(member, $"unignored {user.GetFullUsername()} on channel {channel.Name}");
-				await channel.SendMessage($"No longer ignoring {user.MakeMention()} on this channel.");
+				await channel.SendMessage($"No longer ignoring {user.NicknameMention} on this channel.");
 			}
 		}
 
@@ -159,12 +159,12 @@ namespace XenoBot2.Commands
 			if (ToggleIgnore(member.Id))
 			{
 				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()} globally.");
-				await channel.SendMessage($"Now ignoring {user.MakeMention()} everywhere.");
+				await channel.SendMessage($"Now ignoring {user.NicknameMention} everywhere.");
 			}
 			else
 			{
 				Utilities.WriteLog(member, $"unignored {user.GetFullUsername()} globally.");
-				await channel.SendMessage($"No longer ignoring {user.MakeMention()} everywhere (unless specifically ignored elsewhere).");
+				await channel.SendMessage($"No longer ignoring {user.NicknameMention} everywhere (unless specifically ignored elsewhere).");
 			}
 		}
 

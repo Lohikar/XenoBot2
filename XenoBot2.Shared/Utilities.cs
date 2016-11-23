@@ -76,9 +76,10 @@ namespace XenoBot2.Shared
 			return builder.ToString();
 		}
 
+		[Obsolete]
 		public static string MakeMention(this User target) => $"<@{target.Id}>";
 
-		public static string GetFullUsername(this User target) => $"{target.NicknameMention}";
+		public static string GetFullUsername(this User target) => $"{target.Name}#{target.Discriminator}";
 
 		/// <summary>
 		///     Returns a random string from a list of strings.

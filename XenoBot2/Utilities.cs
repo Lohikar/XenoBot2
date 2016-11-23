@@ -39,22 +39,6 @@ namespace XenoBot2
 			NonBlockingConsole.WriteLine(message);
 		}
 
-		/////  <summary>
-		///// 		Sends a message to the specified channel.
-		/////  </summary>
-		///// <param name="client"></param>
-		///// <param name="message">The message to send.</param>
-		/////  <param name="channel">The channel to send the message to.</param>
-		//internal static void SendMessageToRoom(this DiscordClient client, string message, Channel channel)
-		//{
-		//	if (string.IsNullOrWhiteSpace(message))
-		//	{
-		//		WriteLog($"WARNING: Empty message addressed to '{channel.Name}' dropped.");
-		//		return;
-		//	}
-		//	client.SendMessageToRoom(message, channel);
-		//}
-
 		/// <summary>
 		///     Writes an entry to the log with a date stamp & event origin user.
 		/// </summary>
