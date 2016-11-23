@@ -23,8 +23,8 @@ namespace XenoBot2
 
 		internal static bool Permitted(UserFlag flag, ulong member, ulong? channel = null)
 		{
-			var channelData = channel != null ? SharedData.UserFlags[member, channel.Value] : UserFlag.None;
-			var globalData = SharedData.UserFlags[member];
+			var channelData = channel != null ? Program.BotInstance.UserFlags[member, channel.Value] : UserFlag.None;
+			var globalData = Program.BotInstance.UserFlags[member];
 
 			return ((channelData | globalData) & flag) == flag;
 		}
@@ -42,7 +42,7 @@ namespace XenoBot2
 		/// <summary>
 		///     Writes an entry to the log with a date stamp & event origin user.
 		/// </summary>
-		/// <param name="originClient">The <see cref="DiscordMember" /> that triggered this event.</param>
+		/// <param name="originClient">The <see cref="User" /> that triggered this event.</param>
 		/// <param name="data">The message to write to the log.</param>
 		internal static void WriteLog(User originClient, string data)
 			=> WriteLog($"Client {originClient.GetFullUsername()} {data}");

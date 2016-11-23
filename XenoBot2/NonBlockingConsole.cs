@@ -11,18 +11,22 @@ namespace XenoBot2
 	/// </summary>
 	public static class NonBlockingConsole
 	{
-		private static readonly BlockingCollection<string> _mQueue = new BlockingCollection<string>();
+		private static readonly BlockingCollection<string> MQueue = new BlockingCollection<string>();
 
 		static NonBlockingConsole()
 		{
 			var thread = new Thread(
-				() => { while (true) Console.WriteLine(_mQueue.Take()); }) {IsBackground = true};
+				() => { while (true) Console.WriteLine(MQueue.Take()); }) {IsBackground = true};
 			thread.Start();
 		}
 
+		/// <summary>
+		///		Write a line to the console.
+		/// </summary>
+		/// <param name="value">The data to write to the console.</param>
 		public static void WriteLine(string value)
 		{
-			_mQueue.Add(value);
+			MQueue.Add(value);
 		}
 	}
 }

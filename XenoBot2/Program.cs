@@ -9,40 +9,65 @@ namespace XenoBot2
 {
 	internal static class Program
 	{
-		private static DiscordClient _client;
-
-		public const char Prefix = '$';
-
-		public static async Task Exit() => await _client.Disconnect();
-
+		public static BotCore BotInstance { get; private set; }
 		private static void Main(string[] args)
+		{
+			BotInstance = new BotCore();
+			BotInstance.Initialize().Wait();
+			BotInstance.Connect();
+		}
+	}
+
+	internal class BotCore
+	{
+		private DiscordClient _client;
+
+		private const char Prefix = '$';
+		private string _key;
+
+		public UserDataStore<ulong, ulong, UserFlag> UserFlags;
+		public UserDataStore<string, ulong, CommandState> CommandStateData;
+
+		public async Task Exit() => await _client.Disconnect();
+
+		public async Task Initialize()
 		{
 			Utilities.WriteLog($"XenoBot2 v{Utilities.GetVersion()} starting initialization...");
 			// Initialize command storage
 			CommandStore.Commands = new CommandStore();
 			// load default commands
 			CommandStore.Commands.AddMany(DefaultCommands.Content);
-			SharedData.CommandState = new UserDataStore<string, ulong, CommandState>(CommandState.None, 0);
-			SharedData.UserFlags = new UserDataStore<ulong, ulong, UserFlag>(UserFlag.User, 0);
+			CommandStateData = new UserDataStore<string, ulong, CommandState>(CommandState.None, 0);
+			UserFlags = new UserDataStore<ulong, ulong, UserFlag>(UserFlag.User, 0);
 
-			SharedData.UserFlags.Add(174018252161286144, SharedData.UserFlags.GlobalValue, UserFlag.BotAdministrator);
+			UserFlags.Add(174018252161286144, UserFlags.GlobalValue, UserFlag.BotAdministrator);
 
 			Utilities.WriteLog("Loading API key from disk...");
-			StreamReader apifile;
-			if (File.Exists("apikey.txt"))
-			{
-				apifile = File.OpenText("apikey.txt");
-				Utilities.WriteLog("Found API key, starting client...");
-			}
-			else
+
+			if (!File.Exists("apikey.txt"))
 			{
 				Utilities.WriteLog("Error: API key not found.\n" +
-				                   "Please create a file named 'apikey.txt' in the same directory as the binary, " +
-				                   "and put your Discord Bot API key into the file.\n" +
-				                   "Press Enter to exit.");
+				   "Please create a file named 'apikey.txt' in the same directory as the binary, " +
+				   "and put your Discord Bot API key into the file.\n" +
+				   "Press Enter to exit.");
 				Console.ReadLine();
-				return;
+				throw new FileNotFoundException();
 			}
+			using (var keyfile = File.OpenText("apikey.txt"))
+			{
+				Utilities.WriteLog("Found API key.");
+				_key = await keyfile.ReadToEndAsync();
+			}
+
+
+			Utilities.WriteLog("Setting up WhatTheCommit...");
+
+			// TODO: Cache wtc info instead of re-downloading each time
+			var wtc = await Shared.Utilities.GetStringAsync("https://www.lohikar.io/assets/xenobot/commits.txt");
+			Strings.WhatTheCommit = wtc.Split('\n');
+
+			var wtcNames = await Shared.Utilities.GetStringAsync("https://www.lohikar.io/assets/xenobot/names.txt");
+			Strings.Names = wtcNames.Split('\n');
 
 			// initialize client
 			_client = new DiscordClient();
@@ -58,21 +83,17 @@ namespace XenoBot2
 				_client.SetGame($"v{Utilities.GetVersion()}");
 			};
 
-
-			Utilities.WriteLog("Setting up WhatTheCommit...");
-
-			// TODO: Cache wtc info instead of re-downloading each time
-			var wtc =
-				Shared.Utilities.GetStringFromWebService("https://www.lohikar.io/assets/xenobot/commits.txt");
-			Strings.WhatTheCommit = wtc.Split('\n');
-
-			Strings.Names = Shared.Utilities.GetStringFromWebService("https://www.lohikar.io/assets/xenobot/names.txt").Split('\n');
-
 			Utilities.WriteLog("Done.");
+		}
 
+		/// <summary>
+		///		Connects to discord. This call blocks until the client terminates.
+		/// </summary>
+		public void Connect()
+		{
 			_client.ExecuteAndWait(async () =>
 			{
-				await _client.Connect(await apifile.ReadToEndAsync(), TokenType.Bot);
+				await _client.Connect(_key, TokenType.Bot);
 			});
 		}
 
@@ -80,7 +101,7 @@ namespace XenoBot2
 		{
 			// silently ignore our own messages & messages from other bots
 			if (string.IsNullOrWhiteSpace(messageText) ||
-			    (messageText[0] != Prefix && !skipPrefix)) return;
+				(messageText[0] != Prefix && !skipPrefix)) return;
 
 			var text = skipPrefix ? messageText : messageText.Substring(1);
 
@@ -91,13 +112,13 @@ namespace XenoBot2
 			if (cmd.Item2 == null)
 			{
 				Utilities.WriteLog(string.Format(Messages.CommandNotDefined, cmd.Item1));
-				SendMessageToRoom($"The command '{cmd.Item1}' seems to be broken right now.", channel);
+				await channel.SendMessage($"The command '{cmd.Item1}' seems to be broken right now.");
 				return;
 			}
 			if ((cmd.Item2.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.IsPrivate) ||
-			    cmd.Item2.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.IsPrivate)
+				cmd.Item2.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.IsPrivate)
 			{
-				SendMessageToRoom("That command cannot be used here.", channel);
+				await channel.SendMessage("That command cannot be used here.");
 				return;
 			}
 			if (!cmd.Item2.Flags.HasFlag(CommandFlag.UsableWhileIgnored) && Utilities.Permitted(UserFlag.Ignored, author))
@@ -110,16 +131,14 @@ namespace XenoBot2
 			catch (InvalidCommandException ex)
 			{
 				Utilities.WriteLog($"Attempted use of invalid command '{ex.AttemptedCommand}'.");
-				SendMessageToRoom("That command is not understood.", channel);
+				await channel.SendMessage("That command is not understood.");
 			}
 			catch (Exception ex)
 			{
 				Utilities.WriteLog($"An exception occurred during execution of command '{cmd.Item1.CommandText}'," +
-				                   $" args '{string.Join(", ", cmd.Item1.Arguments)}'.\n" + ex.Message);
-				SendMessageToRoom($"An internal error occurred running command '{cmd.Item1.CommandText}'.", channel);
+								   $" args '{string.Join(", ", cmd.Item1.Arguments)}'.\n" + ex.Message);
+				await channel.SendMessage($"An internal error occurred running command '{cmd.Item1.CommandText}'.");
 			}
 		}
-
-		private static void SendMessageToRoom(string data, Channel channel) => channel.SendMessage(data);
 	}
 }

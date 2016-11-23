@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using Discord;
 
 namespace XenoBot2.Shared
@@ -17,6 +18,7 @@ namespace XenoBot2.Shared
 		/// </summary>
 		/// <param name="url">The URL of the file to download.</param>
 		/// <returns></returns>
+		[Obsolete("Use GetStringAsync if possible.")]
 		public static string GetStringFromWebService(string url)
 		{
 			using (var webclient = new WebClient())
@@ -24,6 +26,17 @@ namespace XenoBot2.Shared
 				var data = webclient.DownloadData(url);
 				return Encoding.ASCII.GetString(data);
 			}
+		}
+
+		/// <summary>
+		///		Downloads a text file from a web site and returns the contents as a string.
+		/// </summary>
+		/// <param name="url"></param>
+		/// <returns></returns>
+		public static async Task<string> GetStringAsync(string url)
+		{
+			using (var client = new WebClient())
+				return await client.DownloadStringTaskAsync(url);
 		}
 
 		/// <summary>

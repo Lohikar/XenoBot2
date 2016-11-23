@@ -41,8 +41,8 @@ namespace XenoBot2.Commands
 			   $"ID:                   {author.Id}\n" +
 			   $"Bot:                  {author.IsBot}\n" +
 			   $"Avatar:               {author.AvatarUrl}\n" +
-			   $"User Flags (Channel): {SharedData.UserFlags[author.Id, channel.Id]}\n" +
-			   $"User Flags (Global):  {SharedData.UserFlags[author.Id]}" +
+			   $"User Flags (Channel): {Program.BotInstance.UserFlags[author.Id, channel.Id]}\n" +
+			   $"User Flags (Global):  {Program.BotInstance.UserFlags[author.Id]}" +
 			   "```";
 
 		internal static async Task ConvertNumber(CommandInfo info, User author, Channel channel)

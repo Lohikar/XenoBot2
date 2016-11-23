@@ -17,7 +17,7 @@ namespace XenoBot2.Commands
 		{
 			Utilities.WriteLog(author, "is shutting down the bot.");
 			await channel.SendMessage("Bot shutting down.");
-			await Program.Exit();
+			await Program.BotInstance.Exit();
 		}
 
 		internal static async Task Enable(CommandInfo info, User member, Channel channel)
@@ -171,9 +171,9 @@ namespace XenoBot2.Commands
 		{
 			var ignored = Utilities.Permitted(UserFlag.Ignored, uid);
 			if (ignored)
-				SharedData.UserFlags[uid, chid] ^= UserFlag.Ignored;
+				Program.BotInstance.UserFlags[uid, chid] ^= UserFlag.Ignored;
 			else
-				SharedData.UserFlags[uid, chid] |= UserFlag.Ignored;
+				Program.BotInstance.UserFlags[uid, chid] |= UserFlag.Ignored;
 
 			return !ignored;
 		}
