@@ -19,7 +19,7 @@ namespace XenoBot2.Shared
 		public string LongHelpText = string.Empty;
 
 		/// <summary>
-		///		
+		///		The category this command should be shown under in help.
 		/// </summary>
 		public string HelpCategory = string.Empty;
 
@@ -33,6 +33,9 @@ namespace XenoBot2.Shared
 		/// </summary>
 		public UserFlag Permission { get; set; } = UserFlag.User;
 
+		/// <summary>
+		///		General flags applied to this command.
+		/// </summary>
 		public CommandFlag Flags { get; set; } = CommandFlag.None;
 		/// <summary>
 		///		The function to execute when the command is called by a user.

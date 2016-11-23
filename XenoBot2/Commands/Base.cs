@@ -99,7 +99,7 @@ namespace XenoBot2.Commands
 		internal static void Version(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
 		{
 			Utilities.WriteLog(author, "requested bot version.");
-			client.SendMessageToRoom($"XenoBot2 v{Utilities.GetVersion()}", channel);
+			client.SendMessageToRoom($"XenoBot2 v{Shared.Utilities.GetVersion()}", channel);
 		}
 	}
 }
