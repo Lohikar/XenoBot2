@@ -26,7 +26,7 @@ namespace XenoBot2.Commands
 		internal static void CatFact(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)
 		{
 			Utilities.WriteLog(author, "requested a cat fact.");
-			client.SendMessageToRoom($"Cat Fact: *{Utilities.GetStringFromWebService("https://cat-facts-as-a-service.appspot.com/fact")}*", channel);
+			client.SendMessageToRoom($"Cat Fact: *{Shared.Utilities.GetStringFromWebService("https://cat-facts-as-a-service.appspot.com/fact")}*", channel);
 		}
 
 		internal static void EightBall(DiscordClient client, CommandInfo info, DiscordMember author, DiscordChannelBase channel)

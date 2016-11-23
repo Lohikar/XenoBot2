@@ -16,6 +16,7 @@ namespace XenoBot2
 		//internal static CombinedChannelCommandManager CombinedChannelCommandMgr;
 		private static bool _exit;
 		private static Thread _clientThread;
+		private static bool noReconnect = false;
 
 		public const char Prefix = '$';
 
@@ -23,7 +24,7 @@ namespace XenoBot2
 
 		private static void Main(string[] args)
 		{
-			Utilities.WriteLog($"XenoBot2 v{Utilities.GetVersion()} starting initialization...");
+			Utilities.WriteLog($"XenoBot2 v{Shared.Utilities.GetVersion()} starting initialization...");
 			// Initialize command storage
 			CommandStore.Commands = new CommandStore();
 			// load default commands
@@ -69,6 +70,7 @@ namespace XenoBot2
 			//_client.UserRemovedFromServer += UserLeave;
 			_client.SocketClosed += (sender, e) =>
 			{
+				if (noReconnect) return;
 				// something went wrong and the socket got closed, attempt reconnect
 				// TODO: More intelligent reconnection
 				NonBlockingConsole.WriteLine("ERROR: !! DISCONNECTED FROM DISCORD !!");
@@ -83,10 +85,10 @@ namespace XenoBot2
 
 			// TODO: Cache wtc info instead of re-downloading each time
 			var wtc =
-				Utilities.GetStringFromWebService("https://www.lohikar.io/assets/xenobot/commits.txt");
+				Shared.Utilities.GetStringFromWebService("https://www.lohikar.io/assets/xenobot/commits.txt");
 			Strings.WhatTheCommit = wtc.Split('\n');
 
-			Strings.Names = Utilities.GetStringFromWebService("https://www.lohikar.io/assets/xenobot/names.txt").Split('\n');
+			Strings.Names = Shared.Utilities.GetStringFromWebService("https://www.lohikar.io/assets/xenobot/names.txt").Split('\n');
 
 			Utilities.WriteLog("Done.");
 
@@ -97,6 +99,10 @@ namespace XenoBot2
 				if (_exit)
 					break;
 			}
+
+			noReconnect = true;
+
+			_client.Logout();
 		}
 
 		private static void Connect(out Thread clientThread, DiscordClient client)
@@ -122,7 +128,7 @@ namespace XenoBot2
 
 		private static void ClientMentioned(object sender, DiscordMessageEventArgs e)
 		{
-			if (CheckMemberIgnore(e.Author)) return;
+			if (CheckBotIgnore(e.Author)) return;
 			Utilities.WriteLog(e.Author, Messages.MentionedMe);
 			_client.SendMessageToChannel(Messages.XenomorphHiss, e.Channel);
 		}
@@ -138,7 +144,7 @@ namespace XenoBot2
 		private static void ParseMessage(DiscordMember author, DiscordChannelBase channel, string messageText)
 		{
 			// silently ignore our own messages & messages from other bots
-			if (CheckMemberIgnore(author) ||
+			if (CheckBotIgnore(author) ||
 				string.IsNullOrWhiteSpace(messageText) ||
 				messageText[0] != Prefix) return;
 
@@ -180,10 +186,7 @@ namespace XenoBot2
 			}
 		}
 
-		private static bool CheckMemberIgnore(DiscordMember member)
-		{
-			return member == _client.Me || member.IsBot;
-		}
+		private static bool CheckBotIgnore(DiscordMember member) => member == _client.Me || member.IsBot;
 
 		private static void SendMessageToRoom(string data, DiscordChannelBase channel) => _client.SendMessageToRoom(data, channel);
 	}
