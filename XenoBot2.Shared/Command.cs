@@ -19,6 +19,11 @@ namespace XenoBot2.Shared
 		public string LongHelpText = string.Empty;
 
 		/// <summary>
+		///		The commands arguments, if any.
+		/// </summary>
+		public string Arguments = string.Empty;
+
+		/// <summary>
 		///		The category this command should be shown under in help.
 		/// </summary>
 		public string HelpCategory = string.Empty;

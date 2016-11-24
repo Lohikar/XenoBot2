@@ -36,7 +36,8 @@ namespace XenoBot2
 					Permission = UserFlag.Administrator,
 					HelpCategory = "Administration",
 					Flags = CommandFlag.NoPrivateChannel | CommandFlag.NonDisableable,
-					Definition = Commands.ChannelAdministration.Enable
+					Definition = Commands.ChannelAdministration.Enable,
+					Arguments = "command"
 				}
 			},
 			{
@@ -46,7 +47,8 @@ namespace XenoBot2
 					Permission = UserFlag.Administrator,
 					HelpCategory = "Administration",
 					Flags = CommandFlag.NoPrivateChannel | CommandFlag.NonDisableable,
-					Definition = Commands.ChannelAdministration.Disable
+					Definition = Commands.ChannelAdministration.Disable,
+					Arguments = "command"
 				}
 			},
 			{
@@ -76,7 +78,8 @@ namespace XenoBot2
 				{
 					HelpText = "Echos the command arguments.",
 					HelpCategory = "Utility",
-					Definition = Commands.Utility.Echo
+					Definition = Commands.Utility.Echo,
+					Arguments = "text"
 				}
 			},
 			{
@@ -91,14 +94,14 @@ namespace XenoBot2
 			{
 				"numeral", new Command
 				{
-					HelpText = "Converts an integer into another format. Available formats: roman, words, wordord, metric.",
-					LongHelpText = "Arguments: format number [culture]\n" +
-					               "Converts an integer into another format.\n" +
+					HelpText = "Converts an integer into another format.",
+					Arguments = "{roman|words|wordord|metric} number",
+					LongHelpText = "Converts an integer into another format.\n" +
 					               "Available formats:\n" +
-					               "* roman - Roman Numerals, i.e. \"XIV\"\n" +
-					               "* words - Words, i.e. \"twenty seven\"\n" +
+					               "* roman   - Roman Numerals, i.e. \"XIV\"\n" +
+					               "* words   - Words, i.e. \"twenty seven\"\n" +
 					               "* wordord - Words (ordinal), i.e. \"twenty seventh\"\n" +
-					               "* metric - Metric prefixed, i.e. \"200K\"\n",
+					               "* metric  - Metric prefixed, i.e. \"200K\"",
 					HelpCategory = "Utility",
 					Definition = Commands.Utility.ConvertNumber
 				}
@@ -116,16 +119,18 @@ namespace XenoBot2
 					Permission = UserFlag.BotAdministrator,
 					HelpCategory = "Administration",
 					Definition = Commands.BotAdministration.HaltBot,
-					Flags = CommandFlag.NonDisableable | CommandFlag.UsableWhileIgnored
+					Flags = CommandFlag.NonDisableable | CommandFlag.UsableWhileIgnored,
+					LongHelpText = "Terminates the bot's process. The bot cannot respond to commands after this command is run!"
 				}
 			},
 			{
 				"help", new Command
 				{
 					HelpText = "Displays this highly informative help text. Use \"$help command\" to get help for command.",
-					HelpCategory = "CommandCategory.Base",
+					HelpCategory = "Core",
 					Definition = Commands.Base.Help,
-					Flags = CommandFlag.UsableWhileIgnored | CommandFlag.NonDisableable
+					Flags = CommandFlag.UsableWhileIgnored | CommandFlag.NonDisableable,
+					Arguments = "[topic]"
 				}
 			},
 			{
@@ -141,7 +146,8 @@ namespace XenoBot2
 				{
 					HelpCategory = "Utility",
 					HelpText = "Gets some information about a user.",
-					Definition = Commands.Utility.UserInfo
+					Definition = Commands.Utility.UserInfo,
+					Arguments = "mention"
 				}
 			},
 			{
@@ -149,7 +155,8 @@ namespace XenoBot2
 				{
 					HelpCategory = "Fun",
 					Definition = Commands.Fun.EightBall,
-					HelpText = "Consult the 8 Ball."
+					HelpText = "Consult the 8 Ball.",
+					Arguments = "[question]"
 				}
 			},
 			{
@@ -165,7 +172,8 @@ namespace XenoBot2
 				{
 					HelpCategory = "Utility",
 					HelpText = "Gets the avatar for the given user",
-					Definition = Commands.Utility.Avatar
+					Definition = Commands.Utility.Avatar,
+					Arguments = "[mention]"
 				}
 			},
 			{
@@ -175,7 +183,8 @@ namespace XenoBot2
 					Permission = UserFlag.Moderator,
 					Flags = CommandFlag.UsableWhileIgnored | CommandFlag.NoPrivateChannel,
 					Definition = Commands.ChannelAdministration.IgnoreUser,
-					HelpText = "Toggles command ignore for a user."
+					HelpText = "Toggles command ignore for a user.",
+					Arguments = "mention"
 				}
 			},
 			{
@@ -185,7 +194,8 @@ namespace XenoBot2
 					Permission = UserFlag.BotAdministrator,
 					Flags = CommandFlag.NonDisableable | CommandFlag.UsableWhileIgnored,
 					Definition = Commands.BotAdministration.GlobalIgnoreUser,
-					HelpText = "Toggles command ignore for a user on all channels."
+					HelpText = "Toggles command ignore for a user on all channels.",
+					Arguments = "mention"
 				}
 			},
 			{
@@ -194,7 +204,8 @@ namespace XenoBot2
 					HelpCategory = "Debug",
 					Permission = UserFlag.BotDebug,
 					Flags = CommandFlag.NonDisableable,
-					Definition = Commands.Debug.Cmdinfo
+					Definition = Commands.Debug.Cmdinfo,
+					Arguments = "command"
 				}
 			},
 			{

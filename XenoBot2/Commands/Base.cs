@@ -21,7 +21,8 @@ namespace XenoBot2.Commands
 				await author.PrivateChannel.SendMessage(s);
 				Thread.Sleep(100);
 			};
-			await channel.SendMessage($"{author.NicknameMention}: Sending you a PM!");
+			if (!channel.IsPrivate)
+				await channel.SendMessage($"{author.NicknameMention}: Sending you a PM!");
 
 			if (!info.HasArguments)
 			{
@@ -53,21 +54,30 @@ namespace XenoBot2.Commands
 			else
 			{
 				if (!Program.BotInstance.Commands.Contains(info.Arguments[0])) return;
-				var cmdmeta = Program.BotInstance.Commands[info.Arguments[0]].ResolveCommand();
-				if (string.IsNullOrEmpty(cmdmeta.LongHelpText))
+				var cmd = Program.BotInstance.Commands[info.Arguments[0]].ResolveCommand();
+
+				Utilities.WriteLog(author, $"requested help page '{info.Arguments[0]}'");
+				var builder = new StringBuilder();
+				builder.AppendLine("```");
+				builder.AppendLine($"Help - {info.Arguments[0]}");
+				builder.AppendLine("---");
+				builder.AppendLine($"Category: {cmd.HelpCategory}");
+				builder.AppendLine($"Authorization: {cmd.Permission}");
+				builder.Append("Arguments: ");
+				builder.AppendLine(string.IsNullOrWhiteSpace(cmd.Arguments) ? "{none}" : cmd.Arguments);
+				if (!string.IsNullOrWhiteSpace(cmd.HelpText))
 				{
-					Utilities.WriteLog(author, $"requested non-existent help page '{info.Arguments[0]}'");
-					await send("That page does not exist.");
+					builder.AppendLine("Short Description:");
+					builder.AppendLine($"\t{cmd.HelpText}");
 				}
-				else
+				if (!string.IsNullOrWhiteSpace(cmd.LongHelpText))
 				{
-					Utilities.WriteLog(author, $"requested help page '{info.Arguments[0]}'");
-					var builder = new StringBuilder();
-					builder.AppendLine($"Help - {info.Arguments[0]}\n```");
-					builder.AppendLine(cmdmeta.LongHelpText);
+					builder.AppendLine("\nDescription: ");
+					builder.AppendLine("\t" + cmd.LongHelpText.Replace("\n", "\n\t").TrimEnd());
+				}
 					builder.AppendLine("```");
-					await send(builder.ToString());
-				}
+				await send(builder.ToString());
+			
 			}
 		}
 
