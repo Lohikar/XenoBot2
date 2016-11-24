@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Discord;
 using XenoBot2.Data;
 using XenoBot2.Shared;
@@ -10,10 +11,11 @@ namespace XenoBot2
 {
 	internal class BotCore
 	{
-		private DiscordClient _client;
+		private DiscordClient _client = null;
 
-		private const char Prefix = '$';
+		private char _prefix;
 		private string _key;
+		private readonly string ConfigPath = Path.Combine("Data", "config.xml");
 
 		public UserDataStore<ulong, ulong, UserFlag> UserFlags;
 		public UserDataStore<string, ulong, CommandState> CommandStateData;
@@ -26,40 +28,82 @@ namespace XenoBot2
 		public async Task Initialize()
 		{
 			Utilities.WriteLog($"XenoBot2 v{Utilities.GetVersion()} starting initialization...");
-			var timer = new Stopwatch();
 
-			// Initialize command storage
+			// Initialize command storage, needs to be done before config load
 			InitializeStorage();
+
+			var timer = new Stopwatch();
+			var serializer = new XmlSerializer(typeof(Config));
+
+			Utilities.WriteLog("Looking for config...");
+			timer.Start();
+
+			if (!File.Exists(ConfigPath))
+			{
+				Utilities.WriteLog("Config not found, creating.");
+				using (var fs = new FileStream(ConfigPath, FileMode.CreateNew))
+				{
+					serializer.Serialize(fs, new Config());
+				}
+
+				Utilities.WriteLog($"Please fill in the config file at \"{Path.Combine(Directory.GetCurrentDirectory(), ConfigPath)}\" and restart the bot.");
+				throw new FileNotFoundException();
+			}
+
+			Utilities.WriteLog("Found config, loading.");
+			using (var fs = File.OpenRead(ConfigPath))
+			{
+				var conf = serializer.Deserialize(fs) as Config;
+				if (conf?.ConfigVersion != 1)
+				{
+					Utilities.WriteLog("WARNING: Unknown config version!");
+				}
+				_prefix = conf?.CommandPrefix ?? '$';
+				_key = conf?.ApiToken;
+				if (string.IsNullOrWhiteSpace(_key))
+				{
+					Utilities.WriteLog("WARNING: No API Key in config! Attempting legacy load.");
+					var path = Path.Combine("Data", "apikey.txt");
+					await LoadApiKey(path);
+				}
+
+				foreach (var user in conf?.BotAdmins ?? new ulong[0])
+				{
+					UserFlags.Add(user, UserFlags.GlobalValue, UserFlag.BotAdministrator);
+				}
+
+				foreach (var user in conf?.BotDebuggers ?? new ulong[0])
+				{
+					UserFlags.Add(user, UserFlags.GlobalValue, UserFlag.BotDebug);
+				}
+			}
+			timer.Stop();
+
+			Utilities.WriteLog($"Config load took {timer.ElapsedMilliseconds} ms.");
 
 			if (!Directory.Exists("Data"))
 				Directory.CreateDirectory("Data");
 
-			Utilities.WriteLog("Loading API key from disk...");
-			var path = Path.Combine("Data", "apikey.txt");
-
-			timer.Start();
-			await LoadApiKey(path);
-			timer.Stop();
-
-			Utilities.WriteLog($"Done loading API key; took {timer.ElapsedMilliseconds} ms.");
-			timer.Reset();
-
-			Utilities.WriteLog("Setting up WhatTheCommit...");
-			timer.Start();
+			Utilities.WriteLog("Setting up command data...");
+			timer.Restart();
 			Strings.WhatTheCommit = (await GetAsset("https://www.lohikar.io/assets/xenobot/commits.txt", "wtc.txt")).Split('\n');
 			Strings.Names = (await GetAsset("https://www.lohikar.io/assets/xenobot/names.txt", "wtc_names.txt")).Split('\n');
 			timer.Stop();
-			Utilities.WriteLog($"Done setting up WhatTheCommit; took {timer.ElapsedMilliseconds} ms.");
+			Utilities.WriteLog($"Done setting up command data; took {timer.ElapsedMilliseconds} ms.");
 
 			// initialize client
 			_client = new DiscordClient();
 			_client.MessageReceived += MessageReceived;
-			_client.Ready += (s, e) => _client.SetGame($"v{Utilities.GetVersion()}");
+			_client.Ready += (s, e) =>
+			{
+				_client.SetGame($"v{Utilities.GetVersion()}");
+				Utilities.WriteLog($"Logged into Discord as {_client.CurrentUser.GetFullUsername()}.");
+			};
 
-			Utilities.WriteLog("Done.");
+			Utilities.WriteLog("Done initialization.");
 		}
 
-		private static async void MessageReceived(object sender, MessageEventArgs e)
+		private async void MessageReceived(object sender, MessageEventArgs e)
 		{
 			if (!e.Message.IsAuthor)
 				await ParseMessage(e.User, e.Channel, e.Message.RawText);
@@ -99,16 +143,18 @@ namespace XenoBot2
 		/// </summary>
 		public void Connect()
 		{
+			if (_client == null) throw new InvalidOperationException("Object not initialized!");
 			_client.ExecuteAndWait(async () =>
 			{
+				Utilities.WriteLog("Connecting to discord...");
 				await _client.Connect(_key, TokenType.Bot);
 			});
 		}
 
-		private static async Task ParseMessage(User author, Channel channel, string messageText, bool skipPrefix = false)
+		private async Task ParseMessage(User author, Channel channel, string messageText, bool skipPrefix = false)
 		{
 			// silently ignore our own messages & messages from other bots
-			if (string.IsNullOrWhiteSpace(messageText) || (messageText[0] != Prefix && !skipPrefix)) return;
+			if (string.IsNullOrWhiteSpace(messageText) || (messageText[0] != _prefix && !skipPrefix)) return;
 
 			var text = skipPrefix ? messageText : messageText.Substring(1);
 

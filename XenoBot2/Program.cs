@@ -1,4 +1,7 @@
-﻿namespace XenoBot2
+﻿using System;
+using System.IO;
+
+namespace XenoBot2
 {
 	internal static class Program
 	{
@@ -6,8 +9,20 @@
 		private static void Main(string[] args)
 		{
 			BotInstance = new BotCore();
-			BotInstance.Initialize().Wait();
-			BotInstance.Connect();
+			try
+			{
+				BotInstance.Initialize().Wait();
+				BotInstance.Connect();
+			}
+			catch (AggregateException ex)
+			{
+				if (!(ex.GetBaseException() is FileNotFoundException))
+					throw ex.GetBaseException();
+
+				NonBlockingConsole.WriteLine();
+				NonBlockingConsole.WriteLine("Press enter to exit.");
+				Console.ReadLine();
+			}
 		}
 	}
 }

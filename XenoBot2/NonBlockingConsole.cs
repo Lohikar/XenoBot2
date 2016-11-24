@@ -28,5 +28,13 @@ namespace XenoBot2
 		{
 			MQueue.Add(value);
 		}
+
+		/// <summary>
+		///		Write a newline to the console.
+		/// </summary>
+		public static void WriteLine()
+		{
+			MQueue.Add(string.Empty);
+		}
 	}
 }

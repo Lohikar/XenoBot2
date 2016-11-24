@@ -93,6 +93,7 @@ namespace XenoBot2.Shared
 		public static string MakeMention(this User target) => $"<@{target.Id}>";
 
 		public static string GetFullUsername(this User target) => $"{target.Name}#{target.Discriminator}";
+		public static string GetFullUsername(this Profile target) => $"{target.Name}#{target.Discriminator}";
 
 		/// <summary>
 		///     Returns a random string from a list of strings.
