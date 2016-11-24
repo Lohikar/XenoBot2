@@ -18,10 +18,12 @@ namespace XenoBot2.Commands
 				_rnd = new Random();
 
 			Utilities.WriteLog(author, "requested a WhatTheCommit message.");
+			// TODO: Not this
 			var msg = Strings.WhatTheCommit.GetRandom().Trim()
 				.Replace("XNAMEX", Strings.Names.GetRandom())
 				.Replace("XUPPERNAMEX", Strings.Names.GetRandom().ToUpper())
-				.Replace("XNUMX", _rnd.Next(9000).ToString());
+				.Replace("XNUMX", _rnd.Next(9000).ToString())
+				.Replace("<br/>", "\n");
 			await channel.SendMessage($"*{msg}*");
 		}
 

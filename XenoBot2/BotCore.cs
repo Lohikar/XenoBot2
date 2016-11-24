@@ -17,8 +17,8 @@ namespace XenoBot2
 		private string _key;
 		private readonly string _configPath = Path.Combine("Data", "config.xml");
 
-		public UserDataStore<ulong, ulong, UserFlag> UserFlags;
-		public UserDataStore<string, ulong, CommandState> CommandStateData;
+		public TwoKeyDictionary<ulong, ulong, UserFlag> UserFlags;
+		public TwoKeyDictionary<string, ulong, CommandState> CommandStateData;
 		public CommandStore Commands;
 
 		public async Task Exit() => await _client.Disconnect();
@@ -99,6 +99,7 @@ namespace XenoBot2
 			{
 				_client.SetGame($"v{Utilities.GetVersion()}");
 				Utilities.WriteLog($"Logged into Discord as {_client.CurrentUser.GetFullUsername()}.");
+				Console.Title = $"{_client.CurrentUser.GetFullUsername()} - XenoBot2 v{Utilities.GetVersion()}";
 			};
 
 			Utilities.WriteLog("Done initialization.");
@@ -115,8 +116,8 @@ namespace XenoBot2
 			Commands = new CommandStore();
 			// load default commands
 			Commands.AddMany(DefaultCommands.Content);
-			CommandStateData = new UserDataStore<string, ulong, CommandState>(CommandState.None, 0);
-			UserFlags = new UserDataStore<ulong, ulong, UserFlag>(UserFlag.User, 0);
+			CommandStateData = new TwoKeyDictionary<string, ulong, CommandState>(CommandState.None, 0);
+			UserFlags = new TwoKeyDictionary<ulong, ulong, UserFlag>(UserFlag.User, 0);
 		}
 
 		private async Task LoadApiKey(string path)

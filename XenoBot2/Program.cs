@@ -15,6 +15,7 @@ namespace XenoBot2
 
 		private static void Main(string[] args)
 		{
+			Console.Title = $"XenoBot2 v{Utilities.GetVersion()}";
 			BotInstance = new BotCore();
 			try
 			{

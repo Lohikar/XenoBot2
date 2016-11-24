@@ -33,12 +33,14 @@ namespace XenoBot2.Commands
 
 				var isAdmin = Utilities.Permitted(UserFlag.Administrator, author, channel);
 
-				var giter = 0;
+				var iter = 0;
 
 				var helpLines = from item in Program.BotInstance.Commands
-								where isAdmin || !item.Value.Flags.HasFlag(CommandFlag.Hidden)
-								let num = giter++
-								group GenerateHelpEntry(item.Value, item.Key) by num / 10 into items
+								let channelPermitted = Utilities.Permitted(item.Value.Permission, author, channel)
+								let globalPermitted = Utilities.Permitted(item.Value.Permission, author)
+								where isAdmin || (!item.Value.Flags.HasFlag(CommandFlag.Hidden) && (channelPermitted || globalPermitted))
+								let num = iter++
+								group GenerateHelpEntry(item.Value, item.Key, channelPermitted, globalPermitted) by num / 10 into items
 								select items;
 
 				var builder = new StringBuilder();
@@ -63,6 +65,7 @@ namespace XenoBot2.Commands
 				builder.AppendLine("---");
 				builder.AppendLine($"Category: {cmd.HelpCategory}");
 				builder.AppendLine($"Authorization: {cmd.Permission}");
+				builder.AppendLine(GeneratePermissionLine(cmd, author, channel));
 				builder.Append("Arguments: ");
 				builder.AppendLine(string.IsNullOrWhiteSpace(cmd.Arguments) ? "{none}" : cmd.Arguments);
 				if (!string.IsNullOrWhiteSpace(cmd.HelpText))
@@ -81,7 +84,16 @@ namespace XenoBot2.Commands
 			}
 		}
 
-		private static string GenerateHelpEntry(Command cmd, string cmdname)
+		private static string GeneratePermissionLine(Command cmd, User user, Channel channel)
+		{
+			var globalPermitted = Utilities.Permitted(cmd.Permission, user);
+			var channelPermitted = Utilities.Permitted(cmd.Permission, user, channel);
+
+			if (globalPermitted) return "You are globally permitted to use this command.";
+			return channelPermitted ? $"You are permitted to use this command in channel '{channel.Name}'." : "You are not permitted to use this command.";
+		}
+
+		private static string GenerateHelpEntry(Command cmd, string cmdname, bool channelPermitted = false, bool globalPermitted = false)
 		{
 			var builder = new StringBuilder();
 

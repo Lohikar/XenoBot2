@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace XenoBot2
 {
-	internal class UserDataStore<TK1, TK2, TV>
+	internal class TwoKeyDictionary<TK1, TK2, TV>
 	{
 		private readonly Dictionary<Tuple<TK1, TK2>, TV> _data;
 
-		public UserDataStore(TV defaultValue, TK2 globalValue)
+		public TwoKeyDictionary(TV defaultValue, TK2 globalValue)
 		{
 			DefaultValue = defaultValue;
 			GlobalValue = globalValue;
@@ -16,6 +17,8 @@ namespace XenoBot2
 
 		public TV DefaultValue { get; }
 		public TK2 GlobalValue { get; }
+
+		public Subkey Subkeys => new Subkey(this);
 
 		public TV this[TK1 firstKey, TK2 secondKey]
 		{
@@ -57,5 +60,16 @@ namespace XenoBot2
 
 		private static Tuple<TK1, TK2> MakeId(TK1 memberId, TK2 channelId)
 			=> new Tuple<TK1, TK2>(memberId, channelId);
+
+		public class Subkey
+		{
+			private readonly TwoKeyDictionary<TK1, TK2, TV> _parent;
+			internal Subkey(TwoKeyDictionary<TK1, TK2, TV> parent)
+			{
+				_parent = parent;
+			}
+
+			public IEnumerable<TV> this[TK1 firstKey] => from item in _parent._data where item.Key.Item1.Equals(firstKey) select item.Value;
+		}
 	}
 }
