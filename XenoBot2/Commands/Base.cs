@@ -16,17 +16,18 @@ namespace XenoBot2.Commands
 	{
 		internal static async Task Help(CommandInfo info, User author, Channel channel)
 		{
+			Func<string, Task> send = async s =>
+			{
+				await author.PrivateChannel.SendMessage(s);
+				Thread.Sleep(100);
+			};
+			await channel.SendMessage($"{author.NicknameMention}: Sending you a PM!");
+
 			if (!info.HasArguments)
 			{
 				Utilities.WriteLog(author, "requested help index.");
 
-				Action<string> send = s =>
-				{
-					channel.SendMessage(s);
-					Thread.Sleep(100);
-				};
-
-				send(Messages.HelpTextHeader);
+				await send(Messages.HelpTextHeader);
 				// show list of commands + shorthelp
 
 				var isAdmin = Utilities.Permitted(UserFlag.Administrator, author, channel);
@@ -45,7 +46,7 @@ namespace XenoBot2.Commands
 				{
 					builder.Clear();
 					i.Aggregate(builder, (b, s) => b.AppendLine(s));
-					send(builder.ToString());
+					await send(builder.ToString());
 				}
 
 			}
@@ -56,7 +57,7 @@ namespace XenoBot2.Commands
 				if (string.IsNullOrEmpty(cmdmeta.LongHelpText))
 				{
 					Utilities.WriteLog(author, $"requested non-existent help page '{info.Arguments[0]}'");
-					await channel.SendMessage("That page does not exist.");
+					await send("That page does not exist.");
 				}
 				else
 				{
@@ -65,7 +66,7 @@ namespace XenoBot2.Commands
 					builder.AppendLine($"Help - {info.Arguments[0]}\n```");
 					builder.AppendLine(cmdmeta.LongHelpText);
 					builder.AppendLine("```");
-					await channel.SendMessage(builder.ToString());
+					await send(builder.ToString());
 				}
 			}
 		}
