@@ -98,8 +98,7 @@ namespace XenoBot2
 					               "* roman - Roman Numerals, i.e. \"XIV\"\n" +
 					               "* words - Words, i.e. \"twenty seven\"\n" +
 					               "* wordord - Words (ordinal), i.e. \"twenty seventh\"\n" +
-					               "* metric - Metric prefixed, i.e. \"200K\"\n" +
-					               "Optionally, a 2-letter culture code can be specified to get output in that language's format.",
+					               "* metric - Metric prefixed, i.e. \"200K\"\n",
 					HelpCategory = "Utility",
 					Definition = Commands.Utility.ConvertNumber
 				}
