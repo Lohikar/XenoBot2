@@ -51,7 +51,7 @@ namespace XenoBot2.Commands
 			using (var client = new WebClient())
 			{
 				dynamic result = JObject.Parse(await client.DownloadStringTaskAsync("http://random.cat/meow"));
-				Utilities.WriteLog("requested a random cat.");
+				Utilities.WriteLog(author, "requested a random cat.");
 				await channel.SendMessage($"{author.NicknameMention}: {result.file}");
 			}
 		}
