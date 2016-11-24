@@ -15,7 +15,7 @@ namespace XenoBot2
 
 		private char _prefix;
 		private string _key;
-		private readonly string ConfigPath = Path.Combine("Data", "config.xml");
+		private readonly string _configPath = Path.Combine("Data", "config.xml");
 
 		public UserDataStore<ulong, ulong, UserFlag> UserFlags;
 		public UserDataStore<string, ulong, CommandState> CommandStateData;
@@ -38,20 +38,20 @@ namespace XenoBot2
 			Utilities.WriteLog("Looking for config...");
 			timer.Start();
 
-			if (!File.Exists(ConfigPath))
+			if (!File.Exists(_configPath))
 			{
 				Utilities.WriteLog("Config not found, creating.");
-				using (var fs = new FileStream(ConfigPath, FileMode.CreateNew))
+				using (var fs = new FileStream(_configPath, FileMode.CreateNew))
 				{
 					serializer.Serialize(fs, new Config());
 				}
 
-				Utilities.WriteLog($"Please fill in the config file at \"{Path.Combine(Directory.GetCurrentDirectory(), ConfigPath)}\" and restart the bot.");
+				Utilities.WriteLog($"Please fill in the config file at \"{Path.Combine(Directory.GetCurrentDirectory(), _configPath)}\" and restart the bot.");
 				throw new FileNotFoundException();
 			}
 
 			Utilities.WriteLog("Found config, loading.");
-			using (var fs = File.OpenRead(ConfigPath))
+			using (var fs = File.OpenRead(_configPath))
 			{
 				var conf = serializer.Deserialize(fs) as Config;
 				if (conf?.ConfigVersion != 1)
@@ -59,6 +59,7 @@ namespace XenoBot2
 					Utilities.WriteLog("WARNING: Unknown config version!");
 				}
 				_prefix = conf?.CommandPrefix ?? '$';
+				Utilities.WriteLog($"Command prefix set to '{_prefix}'.");
 				_key = conf?.ApiToken;
 				if (string.IsNullOrWhiteSpace(_key))
 				{
@@ -69,12 +70,12 @@ namespace XenoBot2
 
 				foreach (var user in conf?.BotAdmins ?? new ulong[0])
 				{
-					UserFlags.Add(user, UserFlags.GlobalValue, UserFlag.BotAdministrator);
+					UserFlags[user, UserFlags.GlobalValue] |= UserFlag.BotAdministrator;
 				}
 
 				foreach (var user in conf?.BotDebuggers ?? new ulong[0])
 				{
-					UserFlags.Add(user, UserFlags.GlobalValue, UserFlag.BotDebug);
+					UserFlags[user, UserFlags.GlobalValue] |= UserFlag.BotDebug;
 				}
 			}
 			timer.Stop();
@@ -106,7 +107,7 @@ namespace XenoBot2
 		private async void MessageReceived(object sender, MessageEventArgs e)
 		{
 			if (!e.Message.IsAuthor)
-				await ParseMessage(e.User, e.Channel, e.Message.RawText);
+				await ParseMessage(e.User, e.Channel, e.Message.RawText, e.Channel.IsPrivate);
 		}
 
 		private void InitializeStorage()
@@ -116,8 +117,6 @@ namespace XenoBot2
 			Commands.AddMany(DefaultCommands.Content);
 			CommandStateData = new UserDataStore<string, ulong, CommandState>(CommandState.None, 0);
 			UserFlags = new UserDataStore<ulong, ulong, UserFlag>(UserFlag.User, 0);
-
-			UserFlags.Add(174018252161286144, UserFlags.GlobalValue, UserFlag.BotAdministrator | UserFlag.BotDebug | UserFlag.Administrator | UserFlag.Moderator);
 		}
 
 		private async Task LoadApiKey(string path)

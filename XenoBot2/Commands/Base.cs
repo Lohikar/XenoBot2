@@ -99,7 +99,7 @@ namespace XenoBot2.Commands
 		internal static async Task Version(CommandInfo info, User author, Channel channel)
 		{
 			Utilities.WriteLog(author, "requested bot version.");
-			await channel.SendMessage($"XenoBot2 v{Utilities.GetVersion()}");
+			await channel.SendMessage($"`XenoBot2 v{Utilities.GetVersion()} {Program.BuildType}`");
 		}
 	}
 }
