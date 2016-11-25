@@ -6,31 +6,37 @@ namespace XenoBot2.Shared
 	public enum UserFlag
 	{
 		/// <summary>
-		///		No permissions required.
+		///     No permissions required.
 		/// </summary>
 		None = 0,
+
 		/// <summary>
-		///		User is ignored.
+		///     User is ignored.
 		/// </summary>
 		Ignored = 1,
+
 		/// <summary>
-		///		Invoker must be able to speak in the affected channel.
+		///     Invoker must be able to speak in the affected channel.
 		/// </summary>
 		User = 2,
+
 		/// <summary>
-		///		Invoker must be a moderator for the affected channel.
+		///     Invoker must be a moderator for the affected channel.
 		/// </summary>
 		Moderator = 4,
+
 		/// <summary>
-		///		Invoker must be an administrator for the server of the affected channel.
+		///     Invoker must be an administrator for the server of the affected channel.
 		/// </summary>
 		Administrator = 8,
+
 		/// <summary>
-		///		Invoker must be the bot administrator. Global permission.
+		///     Invoker must be the bot administrator. Global permission.
 		/// </summary>
 		BotAdministrator = 16,
+
 		/// <summary>
-		///		Invoker must be allowed to debug the bot. Global permission.
+		///     Invoker must be allowed to debug the bot. Global permission.
 		/// </summary>
 		BotDebug = 32
 	}
@@ -39,27 +45,32 @@ namespace XenoBot2.Shared
 	public enum CommandFlag
 	{
 		/// <summary>
-		///		No flags set.
+		///     No flags set.
 		/// </summary>
 		None = 0,
+
 		/// <summary>
-		///		Command is disallowed in normal channels.
+		///     Command is disallowed in normal channels.
 		/// </summary>
 		NoPublicChannel = 1,
+
 		/// <summary>
-		///		Command is disallowed in private messaging.
+		///     Command is disallowed in private messaging.
 		/// </summary>
 		NoPrivateChannel = 2,
+
 		/// <summary>
-		///		Command can be used while user is ignored by bot.
+		///     Command can be used while user is ignored by bot.
 		/// </summary>
 		UsableWhileIgnored = 4,
+
 		/// <summary>
-		///		Command cannot be disabled.
+		///     Command cannot be disabled.
 		/// </summary>
 		NonDisableable = 8,
+
 		/// <summary>
-		///		Command does not show in help index pages.
+		///     Command does not show in help index pages.
 		/// </summary>
 		Hidden = 16
 	}
@@ -68,19 +79,22 @@ namespace XenoBot2.Shared
 	public enum CommandState
 	{
 		/// <summary>
-		///		No special state is set.
+		///     No special state is set.
 		/// </summary>
 		None = 0,
+
 		/// <summary>
-		///		The command is disabled in this context.
+		///     The command is disabled in this context.
 		/// </summary>
 		Disabled = 1,
+
 		/// <summary>
-		///		The command is hidden from help indexes in this context.
+		///     The command is hidden from help indexes in this context.
 		/// </summary>
 		Hidden = 2,
+
 		/// <summary>
-		///		The command does not exist.
+		///     The command does not exist.
 		/// </summary>
 		DoesNotExist = 4
 	}

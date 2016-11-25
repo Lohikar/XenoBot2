@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Discord;
@@ -29,9 +28,9 @@ namespace XenoBot2.Shared
 		}
 
 		/// <summary>
-		///		Downloads a text file from a web site and returns the contents as a string.
+		///     Downloads a text file from a web site and returns the contents as a string.
 		/// </summary>
-		/// <param name="url"></param>
+		/// <param name="url">The url of the resource to fetch.</param>
 		/// <returns></returns>
 		public static async Task<string> GetStringAsync(string url)
 		{
