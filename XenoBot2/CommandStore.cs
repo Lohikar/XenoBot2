@@ -5,7 +5,7 @@ using XenoBot2.Shared;
 
 namespace XenoBot2
 {
-	internal class CommandStore : IEnumerable<KeyValuePair<string,Command>>
+	internal class CommandStore : IEnumerable<KeyValuePair<string, Command>>
 	{
 		private readonly IDictionary<string, Command> _commands;
 
@@ -13,7 +13,7 @@ namespace XenoBot2
 
 		public void AddMany(IDictionary<string, Command> source) =>
 			source.ToList().ForEach(x => _commands.Add(x.Key, x.Value));
-		
+
 		public void Add(string id, Command cmd) => _commands.Add(id, cmd);
 
 		public bool Contains(string id) => _commands.ContainsKey(id.ToLower());

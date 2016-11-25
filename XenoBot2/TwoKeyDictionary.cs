@@ -64,12 +64,14 @@ namespace XenoBot2
 		public class Subkey
 		{
 			private readonly TwoKeyDictionary<TK1, TK2, TV> _parent;
+
 			internal Subkey(TwoKeyDictionary<TK1, TK2, TV> parent)
 			{
 				_parent = parent;
 			}
 
-			public IEnumerable<TV> this[TK1 firstKey] => from item in _parent._data where item.Key.Item1.Equals(firstKey) select item.Value;
+			public IEnumerable<TV> this[TK1 firstKey]
+				=> from item in _parent._data where item.Key.Item1.Equals(firstKey) select item.Value;
 		}
 	}
 }

@@ -11,7 +11,7 @@ namespace XenoBot2
 {
 	internal class BotCore
 	{
-		private DiscordClient _client = null;
+		private DiscordClient _client;
 
 		private char _prefix;
 		private string _key;
@@ -46,7 +46,8 @@ namespace XenoBot2
 					serializer.Serialize(fs, new Config());
 				}
 
-				Utilities.WriteLog($"Please fill in the config file at \"{Path.Combine(Directory.GetCurrentDirectory(), _configPath)}\" and restart the bot.");
+				Utilities.WriteLog(
+					$"Please fill in the config file at \"{Path.Combine(Directory.GetCurrentDirectory(), _configPath)}\" and restart the bot.");
 				throw new FileNotFoundException();
 			}
 
@@ -125,9 +126,9 @@ namespace XenoBot2
 			if (!File.Exists(path))
 			{
 				Utilities.WriteLog("Error: API key not found.\n" +
-								   "Please create a file named 'apikey.txt' in the \"Data\" directory, " +
-								   "and put your Discord Bot API key into the file.\n" +
-								   "Press Enter to exit.");
+				                   "Please create a file named 'apikey.txt' in the \"Data\" directory, " +
+				                   "and put your Discord Bot API key into the file.\n" +
+				                   "Press Enter to exit.");
 				Console.ReadLine();
 				throw new FileNotFoundException();
 			}
@@ -139,7 +140,7 @@ namespace XenoBot2
 		}
 
 		/// <summary>
-		///		Connects to discord. This call blocks until the client terminates.
+		///     Connects to discord. This call blocks until the client terminates.
 		/// </summary>
 		public void Connect()
 		{
@@ -161,7 +162,8 @@ namespace XenoBot2
 			// Process command & execute
 			var cmd = CommandParser.ParseCommand(text, channel);
 			if (CommandInvalid(cmd, author)) return;
-			if ((cmd.BoundCommand.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.IsPrivate) || cmd.BoundCommand.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.IsPrivate)
+			if ((cmd.BoundCommand.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.IsPrivate) ||
+			    cmd.BoundCommand.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.IsPrivate)
 			{
 				await channel.SendMessage("That command cannot be used here.");
 				return;
@@ -180,7 +182,8 @@ namespace XenoBot2
 		}
 
 		private static bool CommandInvalid(CommandInfo cmd, User author) =>
-			 cmd.State.HasFlag(CommandState.DoesNotExist) || cmd.BoundCommand == null || !cmd.BoundCommand.Flags.HasFlag(CommandFlag.UsableWhileIgnored) && Utilities.Permitted(UserFlag.Ignored, author);
+			cmd.State.HasFlag(CommandState.DoesNotExist) || cmd.BoundCommand == null ||
+			!cmd.BoundCommand.Flags.HasFlag(CommandFlag.UsableWhileIgnored) && Utilities.Permitted(UserFlag.Ignored, author);
 
 		private static async Task<string> GetAsset(string url, string cacheFileName)
 		{
@@ -194,7 +197,7 @@ namespace XenoBot2
 			using (var writer = new FileStream(path, FileMode.CreateNew))
 			using (var text = new StreamWriter(writer))
 				await text.WriteAsync(asset);
-			
+
 			return asset;
 		}
 	}
