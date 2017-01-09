@@ -132,10 +132,7 @@ namespace XenoBot2.Shared
 		/// </summary>
 		public static bool LessThan<T>(this ICollection<T> source, int num) => source.Count < num;
 
-		[Obsolete]
-		public static string GetName(this Channel channel) => channel.Name;
-
 		public static User GetMemberFromMention(this string src, Channel channel)
-			=> channel.GetUser(uint.Parse(src.Replace("<@!", "").Replace("<@", "").Replace(">", "")));
+			=> channel.GetUser(ulong.Parse(src.Replace("<@!", "").Replace("<@", "").Replace(">", "")));
 	}
 }
