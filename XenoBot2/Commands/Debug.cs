@@ -38,7 +38,7 @@ namespace XenoBot2.Commands
 			Utilities.WriteLog(author, "requested channel info.");
 			await channel.SendMessage("```\n" +
 			                          $"ID: {channel.Id}\n" +
-			                          $"Name{channel.Name}" +
+			                          $"Name: {channel.Name}\n" +
 			                          $"Private: {channel.IsPrivate}\n" +
 			                          $"Topic: {channel.Topic}\n" +
 			                          "```");

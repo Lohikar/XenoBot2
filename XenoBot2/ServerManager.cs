@@ -86,6 +86,7 @@ namespace XenoBot2
 		{
 			_target = target;
 			_userPermissions = new ConcurrentDictionary<ulong, UserFlag>();
+			Utilities.WriteLog($"ServerManager: Registered new server {target.Name} ({target.Id})");
 		}
 
 		public UserFlag GetPermission(ulong user)
