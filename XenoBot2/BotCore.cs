@@ -17,7 +17,7 @@ namespace XenoBot2
 		private string _key;
 		private readonly string _configPath = Path.Combine("Data", "config.xml");
 
-		public TwoKeyDictionary<ulong, ulong, UserFlag> UserFlags;
+		public ServerManager Manager;
 		public TwoKeyDictionary<string, ulong, CommandState> CommandStateData;
 		public CommandStore Commands;
 
@@ -71,12 +71,12 @@ namespace XenoBot2
 
 				foreach (var user in conf?.BotAdmins ?? new ulong[0])
 				{
-					UserFlags[user, UserFlags.GlobalValue] |= UserFlag.BotAdministrator;
+					Manager.AddGlobalPermission(user, UserFlag.BotAdministrator);
 				}
 
 				foreach (var user in conf?.BotDebuggers ?? new ulong[0])
 				{
-					UserFlags[user, UserFlags.GlobalValue] |= UserFlag.BotDebug;
+					Manager.AddGlobalPermission(user, UserFlag.BotDebug);
 				}
 			}
 			timer.Stop();
@@ -118,7 +118,8 @@ namespace XenoBot2
 			// load default commands
 			Commands.AddMany(DefaultCommands.Content);
 			CommandStateData = new TwoKeyDictionary<string, ulong, CommandState>(CommandState.None, 0);
-			UserFlags = new TwoKeyDictionary<ulong, ulong, UserFlag>(UserFlag.User, 0);
+			//UserFlags = new TwoKeyDictionary<ulong, ulong, UserFlag>(UserFlag.User, 0);
+			Manager = new ServerManager();
 		}
 
 		private async Task LoadApiKey(string path)

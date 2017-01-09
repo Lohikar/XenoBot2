@@ -19,14 +19,13 @@ namespace XenoBot2
 			=> command.AliasFor == null ? command : Program.BotInstance.Commands[command.AliasFor];
 
 		internal static bool Permitted(UserFlag flag, User member, Channel channel = null)
-			=> Permitted(flag, member.Id, channel?.Id);
+			=> Permitted(flag, member.Id, channel);
 
-		internal static bool Permitted(UserFlag flag, ulong member, ulong? channel = null)
+		internal static bool Permitted(UserFlag flag, ulong member, Channel channel = null)
 		{
-			var channelData = channel != null ? Program.BotInstance.UserFlags[member, channel.Value] : UserFlag.None;
-			var globalData = Program.BotInstance.UserFlags[member];
+			var data = Program.BotInstance.Manager.GetPermissionFlag(member, channel);
 
-			return (channelData | globalData).HasFlag(flag);
+			return data.HasFlag(flag);
 		}
 
 		internal static bool HasState(CommandState flag, string command, ulong? channel = null)
@@ -65,13 +64,14 @@ namespace XenoBot2
 		/// <returns>True if user is now ignored, false if not.</returns>
 		public static bool ToggleIgnore(ulong uid, ulong chid = 0)
 		{
-			var ignored = Permitted(UserFlag.Ignored, uid);
+			/*var ignored = Permitted(UserFlag.Ignored, uid);
 			if (ignored)
 				Program.BotInstance.UserFlags[uid, chid] ^= UserFlag.Ignored;
 			else
 				Program.BotInstance.UserFlags[uid, chid] |= UserFlag.Ignored;
 
-			return !ignored;
+			return !ignored;*/
+			throw new NotImplementedException();
 		}
 	}
 }

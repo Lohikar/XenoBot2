@@ -36,6 +36,7 @@ namespace XenoBot2.Commands
 				var iter = 0;
 
 				var helpLines = from item in Program.BotInstance.Commands
+								where item.Value != null
 								let channelPermitted = Utilities.Permitted(item.Value.Permission, author, channel)
 								let globalPermitted = Utilities.Permitted(item.Value.Permission, author)
 								where isAdmin || (!item.Value.Flags.HasFlag(CommandFlag.Hidden) && (channelPermitted || globalPermitted))

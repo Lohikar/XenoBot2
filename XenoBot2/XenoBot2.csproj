@@ -81,7 +81,9 @@
     <Compile Include="CommandParser.cs" />
     <Compile Include="Commands\ChannelAdministration.cs" />
     <Compile Include="Commands\Debug.cs" />
+    <Compile Include="Commands\PermissionManagement.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="ServerManager.cs" />
     <Compile Include="TwoKeyDictionary.cs" />
     <Compile Include="DefaultCommands.cs" />
     <Compile Include="CommandStore.cs" />

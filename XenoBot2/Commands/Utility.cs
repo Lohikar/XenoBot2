@@ -38,11 +38,11 @@ namespace XenoBot2.Commands
 		private static string GetInfoString(User author, Channel channel)
 			=> $"Information about: **{author.GetFullUsername()}**\n" +
 			   "```\n" +
-			   $"ID:                   {author.Id}\n" +
-			   $"Bot:                  {author.IsBot}\n" +
-			   $"Avatar:               {author.AvatarUrl}\n" +
-			   $"User Flags (Channel): {Program.BotInstance.UserFlags[author.Id, channel.Id]}\n" +
-			   $"User Flags (Global):  {Program.BotInstance.UserFlags[author.Id]}" +
+			   $"ID:				{author.Id}\n" +
+			   $"Bot:				{author.IsBot}\n" +
+			   $"Avatar:			{author.AvatarUrl}\n" +
+			   $"User Flags (Ag):	{Program.BotInstance.Manager.GetPermissionFlag(author, channel)}\n" +
+			   $"User Flags (G):	{Program.BotInstance.Manager.GetPermissionFlag(author, null)}" + 
 			   "```";
 
 		internal static async Task ConvertNumber(CommandInfo info, User author, Channel channel)

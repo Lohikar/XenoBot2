@@ -6,39 +6,44 @@ namespace XenoBot2.Shared
 	public enum UserFlag
 	{
 		/// <summary>
-		///     No permissions required.
+		///     No permissions present or required.
 		/// </summary>
 		None = 0,
 
 		/// <summary>
 		///     User is ignored.
 		/// </summary>
-		Ignored = 1,
+		Ignored = 1 << 0,
 
 		/// <summary>
-		///     Invoker must be able to speak in the affected channel.
+		///     Invoker must be able to speak in the affected channel. Present on any user able to speak in the channel.
 		/// </summary>
-		User = 2,
+		User = 1 << 1,
 
 		/// <summary>
-		///     Invoker must be a moderator for the affected channel.
+		///     Invoker must be a moderator for the affected channel. Set by server owner.
 		/// </summary>
-		Moderator = 4,
+		Moderator = 1 << 2,
 
 		/// <summary>
-		///     Invoker must be an administrator for the server of the affected channel.
+		///     Invoker must be an administrator for the server of the affected channel. Set by server owner.
 		/// </summary>
-		Administrator = 8,
+		Administrator = 1 << 3,
 
 		/// <summary>
-		///     Invoker must be the bot administrator. Global permission.
+		///		Invoker must be the owner of the server. Automatically assigned and cannot be reassigned.
 		/// </summary>
-		BotAdministrator = 16,
+		Owner = 1 << 4,
 
 		/// <summary>
-		///     Invoker must be allowed to debug the bot. Global permission.
+		///     Invoker must be the bot administrator. Global permission. Set in bot configuration.
 		/// </summary>
-		BotDebug = 32
+		BotAdministrator = 1 << 5,
+
+		/// <summary>
+		///     Invoker must be allowed to debug the bot. Global permission. Set in bot configuration.
+		/// </summary>
+		BotDebug = 1 << 6
 	}
 
 	[Flags]
