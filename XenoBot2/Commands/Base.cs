@@ -31,15 +31,13 @@ namespace XenoBot2.Commands
 				await send(Messages.HelpTextHeader);
 				// show list of commands + shorthelp
 
-				var isAdmin = Utilities.Permitted(UserFlag.Administrator, author, channel);
-
 				var iter = 0;
 
 				var helpLines = from item in Program.BotInstance.Commands
 								where item.Value != null
 								let channelPermitted = Utilities.Permitted(item.Value.Permission, author, channel)
 								let globalPermitted = Utilities.Permitted(item.Value.Permission, author)
-								where isAdmin || (!item.Value.Flags.HasFlag(CommandFlag.Hidden) && (channelPermitted || globalPermitted))
+								where !item.Value.Flags.HasFlag(CommandFlag.Hidden) && channelPermitted
 								let num = iter++
 								group GenerateHelpEntry(item.Value, item.Key, channelPermitted, globalPermitted) by num / 10 into items
 								select items;

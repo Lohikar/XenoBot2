@@ -22,6 +22,9 @@ namespace XenoBot2
 			if (channel == null)
 				return flag;	// only return global flags if no channel context supplied
 
+			if (channel.IsPrivate)
+				return flag | UserFlag.User;
+
 			var server = channel.Server;
 			if (!_servers.ContainsKey(server.Id))
 			{

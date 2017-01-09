@@ -9,8 +9,10 @@ namespace XenoBot2
 
 #if DEBUG
 		public const string BuildType = "DEBUG";
+		public const string BuildTypeShort = "D";
 #else
 		public const string BuildType = "RELEASE";
+		public const string BuildTypeShort = "R";
 #endif
 
 		private static void Main(string[] args)

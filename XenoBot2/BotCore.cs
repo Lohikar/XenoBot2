@@ -98,9 +98,9 @@ namespace XenoBot2
 			_client.MessageReceived += MessageReceived;
 			_client.Ready += (s, e) =>
 			{
-				_client.SetGame($"v{Utilities.GetVersion()}");
+				_client.SetGame($"v{Utilities.GetVersion()}-{Program.BuildTypeShort}");
 				Utilities.WriteLog($"Logged into Discord as {_client.CurrentUser.GetFullUsername()}.");
-				Console.Title = $"{_client.CurrentUser.GetFullUsername()} - XenoBot2 v{Utilities.GetVersion()}";
+				Console.Title = $"{_client.CurrentUser.GetFullUsername()} - XenoBot2 v{Utilities.GetVersion()} {Program.BuildType}";
 			};
 
 			Utilities.WriteLog("Done initialization.");
@@ -118,7 +118,6 @@ namespace XenoBot2
 			// load default commands
 			Commands.AddMany(DefaultCommands.Content);
 			CommandStateData = new TwoKeyDictionary<string, ulong, CommandState>(CommandState.None, 0);
-			//UserFlags = new TwoKeyDictionary<ulong, ulong, UserFlag>(UserFlag.User, 0);
 			Manager = new ServerManager();
 		}
 
@@ -162,9 +161,20 @@ namespace XenoBot2
 
 			// Process command & execute
 			var cmd = CommandParser.ParseCommand(text, channel);
-			if (CommandInvalid(cmd, author)) return;
-			if ((cmd.BoundCommand.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.IsPrivate) ||
-			    cmd.BoundCommand.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.IsPrivate)
+
+			if (cmd.State.HasFlag(CommandState.DoesNotExist))
+				return;
+
+			var bound = cmd.BoundCommand;
+
+			if (bound == null)
+				return;
+
+			if (!bound.Flags.HasFlag(CommandFlag.UsableWhileIgnored) && Utilities.Permitted(UserFlag.Ignored, author, channel))
+				return;
+
+			if ((bound.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.IsPrivate) ||
+			    bound.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.IsPrivate)
 			{
 				await channel.SendMessage("That command cannot be used here.");
 				return;
@@ -174,17 +184,18 @@ namespace XenoBot2
 				// execute command
 				await cmd.BoundCommand.Definition(cmd, author, channel);
 			}
-			catch (Exception ex)
+			catch (NotImplementedException)
 			{
-				Utilities.WriteLog($"An exception occurred during execution of command '{cmd.CommandText}'," +
-				                   $" args '{string.Join(", ", cmd.Arguments)}'.\n" + ex.Message);
-				await channel.SendMessage($"An internal error occurred running command '{cmd.CommandText}'.");
+				Utilities.WriteLog(author, $"attempted to use unimplemented command '{cmd.CommandText}'.");
+				await channel.SendMessage("Sorry, but that command is not finished yet.");
 			}
+			//catch (Exception ex)
+			//{
+			//	Utilities.WriteLog($"An exception occurred during execution of command '{cmd.CommandText}'," +
+			//	                   $" args '{string.Join(", ", cmd.Arguments)}'.\n" + ex.Message);
+			//	await channel.SendMessage($"An internal error occurred running command '{cmd.CommandText}'.");
+			//}
 		}
-
-		private static bool CommandInvalid(CommandInfo cmd, User author) =>
-			cmd.State.HasFlag(CommandState.DoesNotExist) || cmd.BoundCommand == null ||
-			!cmd.BoundCommand.Flags.HasFlag(CommandFlag.UsableWhileIgnored) && Utilities.Permitted(UserFlag.Ignored, author);
 
 		private static async Task<string> GetAsset(string url, string cacheFileName)
 		{

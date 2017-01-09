@@ -52,7 +52,10 @@ namespace XenoBot2
 		/// <param name="originClient">The <see cref="User" /> that triggered this event.</param>
 		/// <param name="data">The message to write to the log.</param>
 		internal static void WriteLog(User originClient, string data)
-			=> WriteLog($"Client {originClient.GetFullUsername()} {data}");
+		{
+			var desc = Permitted(UserFlag.BotAdministrator, originClient) ? "Admin" : "Client";
+			WriteLog($"{desc} {originClient.GetFullUsername()} {data}");
+		}
 
 		public static Version GetVersion() => Assembly.GetExecutingAssembly().GetName().Version;
 
