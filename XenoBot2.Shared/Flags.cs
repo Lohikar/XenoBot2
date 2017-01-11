@@ -21,29 +21,29 @@ namespace XenoBot2.Shared
 		User = 1 << 1,
 
 		/// <summary>
-		///     Invoker must be a moderator for the affected channel. Set by server owner.
+		///     Invoker must have moderation permissions for the affected channel. Set by server owner.
 		/// </summary>
-		Moderator = 1 << 2,
+		Moderate = 1 << 2,
 
 		/// <summary>
-		///     Invoker must be an administrator for the server of the affected channel. Set by server owner.
+		///     Invoker must have administration perms for the server of the affected channel. Set by server owner.
 		/// </summary>
-		Administrator = 1 << 3,
+		Administrate = 1 << 3,
 
 		/// <summary>
-		///		Invoker must be the owner of the server. Automatically assigned and cannot be reassigned.
+		///		Invoker must be the owner of the server. Automatically assigned and cannot be reassigned. Implies Moderate and Administrate.
 		/// </summary>
 		Owner = 1 << 4,
 
 		/// <summary>
 		///     Invoker must be the bot administrator. Global permission. Set in bot configuration.
 		/// </summary>
-		BotAdministrator = 1 << 5,
+		BotAdministrate = 1 << 5,
 
 		/// <summary>
 		///     Invoker must be allowed to debug the bot. Global permission. Set in bot configuration.
 		/// </summary>
-		BotDebug = 1 << 6
+		Debug = 1 << 6
 	}
 
 	[Flags]

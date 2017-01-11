@@ -34,7 +34,7 @@ namespace XenoBot2
 				"enable", new Command
 				{
 					HelpText = "Enables a disabled command on the current channel.",
-					Permission = UserFlag.Administrator,
+					Permission = UserFlag.Administrate,
 					HelpCategory = "Administration",
 					Flags = CommandFlag.NoPrivateChannel | CommandFlag.NonDisableable,
 					Definition = ChannelAdministration.Enable,
@@ -45,7 +45,7 @@ namespace XenoBot2
 				"disable", new Command
 				{
 					HelpText = "Disables an enabled command on the current channel.",
-					Permission = UserFlag.Administrator,
+					Permission = UserFlag.Administrate,
 					HelpCategory = "Administration",
 					Flags = CommandFlag.NoPrivateChannel | CommandFlag.NonDisableable,
 					Definition = ChannelAdministration.Disable,
@@ -117,7 +117,7 @@ namespace XenoBot2
 				"!halt", new Command
 				{
 					HelpText = "Shuts down the bot.",
-					Permission = UserFlag.BotAdministrator,
+					Permission = UserFlag.BotAdministrate,
 					HelpCategory = "Administration",
 					Definition = BotAdministration.HaltBot,
 					Flags = CommandFlag.NonDisableable | CommandFlag.UsableWhileIgnored,
@@ -181,7 +181,7 @@ namespace XenoBot2
 				"ignore", new Command
 				{
 					HelpCategory = "Core",
-					Permission = UserFlag.Moderator,
+					Permission = UserFlag.Moderate,
 					Flags = CommandFlag.UsableWhileIgnored | CommandFlag.NoPrivateChannel,
 					Definition = ChannelAdministration.IgnoreUser,
 					HelpText = "Toggles command ignore for a user.",
@@ -192,7 +192,7 @@ namespace XenoBot2
 				"globalignore", new Command
 				{
 					HelpCategory = "Core",
-					Permission = UserFlag.BotAdministrator,
+					Permission = UserFlag.BotAdministrate,
 					Flags = CommandFlag.NonDisableable | CommandFlag.UsableWhileIgnored,
 					Definition = BotAdministration.GlobalIgnoreUser,
 					HelpText = "Toggles command ignore for a user on all channels.",
@@ -203,7 +203,7 @@ namespace XenoBot2
 				"!cmdinfo", new Command
 				{
 					HelpCategory = "Debug",
-					Permission = UserFlag.BotDebug,
+					Permission = UserFlag.Debug,
 					Flags = CommandFlag.NonDisableable,
 					Definition = Debug.Cmdinfo,
 					Arguments = "command"
@@ -213,7 +213,7 @@ namespace XenoBot2
 				"!chinfo", new Command
 				{
 					HelpCategory = "Debug",
-					Permission = UserFlag.BotDebug,
+					Permission = UserFlag.Debug,
 					Flags = CommandFlag.NonDisableable,
 					Definition = Debug.GetChannelInfo
 				}
@@ -224,6 +224,15 @@ namespace XenoBot2
 					HelpCategory = "Fun",
 					Definition = Fun.RandomCat,
 					HelpText = "Meow."
+				}
+			},
+			{
+				"die", new Command
+				{
+					HelpCategory = "Fun",
+					Definition = Fun.RollDie,
+					HelpText = "Rolls a die.",
+					Arguments = "([dies]d[sides]|[dies] [sides])"
 				}
 			}
 		};

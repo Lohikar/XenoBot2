@@ -69,7 +69,7 @@ namespace XenoBot2.Commands
 
 			var user = info.Arguments.First().GetMemberFromMention(channel);
 
-			if (Utilities.ToggleIgnore(member.Id, channel.Id))
+			if (Utilities.ToggleIgnore(member, channel))
 			{
 				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()} on channel {channel.Name}");
 				await channel.SendMessage($"Now ignoring {user.NicknameMention} on this channel.");

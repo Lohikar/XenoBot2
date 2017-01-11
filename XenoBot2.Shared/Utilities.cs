@@ -38,15 +38,11 @@ namespace XenoBot2.Shared
 				return await client.DownloadStringTaskAsync(url);
 		}
 
-		/// <summary>
-		///     Splits a string into an array of strings.
-		/// </summary>
-		/// <param name="source">The string to split.</param>
-		/// <param name="predictedSplitLen">How large each string probably will be. Specify to theoretically improve performance.</param>
-		/// <param name="splitValues">Array of chars to split on.</param>
-		/// <returns></returns>
-		public static IEnumerable<string> LazySplit(this string source, int predictedSplitLen, params char[] splitValues)
+		private static IEnumerable<string> Do_LazySplit(this string source, int predictedSplitLen, char[] splitValues)
 		{
+			if (source.Length <= 0)
+				yield break;
+
 			var builder = predictedSplitLen <= 0
 				? new StringBuilder()
 				: new StringBuilder(predictedSplitLen);
@@ -63,6 +59,17 @@ namespace XenoBot2.Shared
 				builder.Append(c);
 			}
 		}
+
+		/// <summary>
+		///     Splits a string into an array of strings.
+		/// </summary>
+		/// <param name="source">The string to split.</param>
+		/// <param name="predictedSplitLen">How large each string probably will be. Specify to theoretically improve performance.</param>
+		/// <param name="splitValues">Array of chars to split on.</param>
+		/// <returns></returns>
+		public static IEnumerable<string> LazySplit(this string source, int predictedSplitLen, params char[] splitValues) =>
+			string.IsNullOrEmpty(source) ? null : Do_LazySplit(source, predictedSplitLen, splitValues);
+		
 
 		/// <summary>
 		///     Repeats a string.

@@ -23,7 +23,7 @@ namespace XenoBot2
 
 		internal static bool Permitted(UserFlag flag, ulong member, Channel channel = null)
 		{
-			var data = Program.BotInstance.Manager.GetPermissionFlag(member, channel);
+			var data = Program.BotInstance.Manager.GetFlag(member, channel);
 
 			return data.HasFlag(flag);
 		}
@@ -53,7 +53,7 @@ namespace XenoBot2
 		/// <param name="data">The message to write to the log.</param>
 		internal static void WriteLog(User originClient, string data)
 		{
-			var desc = Permitted(UserFlag.BotAdministrator, originClient) ? "Admin" : "Client";
+			var desc = Permitted(UserFlag.BotAdministrate, originClient) ? "Admin" : "Client";
 			WriteLog($"{desc} {originClient.GetFullUsername()} {data}");
 		}
 
@@ -62,19 +62,41 @@ namespace XenoBot2
 		/// <summary>
 		///     Toggles the ignore state for a user, globally or per-channel.
 		/// </summary>
-		/// <param name="uid">The user ID to toggle ignore for.</param>
-		/// <param name="chid">The channel ID to ignore on. Omit for global.</param>
+		/// <param name="user">The user to toggle ignore for.</param>
+		/// <param name="context">The channel to ignore on. Omit for global.</param>
 		/// <returns>True if user is now ignored, false if not.</returns>
-		public static bool ToggleIgnore(ulong uid, ulong chid = 0)
+		public static bool ToggleIgnore(User user, Channel context)
 		{
-			/*var ignored = Permitted(UserFlag.Ignored, uid);
-			if (ignored)
-				Program.BotInstance.UserFlags[uid, chid] ^= UserFlag.Ignored;
+			var ignoreState = Program.BotInstance.Manager[context.Server.Id].GetFlag(user.Id).HasFlag(UserFlag.Ignored);
+			if (ignoreState)
+			{
+				Program.BotInstance.Manager[context.Server.Id].RemoveFlag(user, UserFlag.Ignored);
+			}
 			else
-				Program.BotInstance.UserFlags[uid, chid] |= UserFlag.Ignored;
+			{
+				Program.BotInstance.Manager[context.Server.Id].AddFlag(user, UserFlag.Ignored);
+			}
+			return ignoreState;
+		}
 
-			return !ignored;*/
-			throw new NotImplementedException();
+		/// <summary>
+		///     Toggles the ignore state for a user, globally or per-channel.
+		/// </summary>
+		/// <param name="user">The user to toggle ignore for.</param>
+		/// <param name="context">The channel to ignore on. Omit for global.</param>
+		/// <returns>True if user is now ignored, false if not.</returns>
+		public static bool ToggleIgnoreGlobal(User user)
+		{
+			var ignoreState = Program.BotInstance.Manager.GetFlag(user, null).HasFlag(UserFlag.Ignored);
+			if (ignoreState)
+			{
+				Program.BotInstance.Manager.RemoveGlobalFlag(user, UserFlag.Ignored);
+			}
+			else
+			{
+				Program.BotInstance.Manager.AddGlobalFlag(user, UserFlag.Ignored);
+			}
+			return ignoreState;
 		}
 	}
 }

@@ -18,11 +18,14 @@ namespace XenoBot2.Commands
 		{
 			Func<string, Task> send = async s =>
 			{
+				if (author.PrivateChannel == null)
+					await author.CreatePMChannel();
 				await author.PrivateChannel.SendMessage(s);
 				Thread.Sleep(100);
 			};
 			if (!channel.IsPrivate)
 				await channel.SendMessage($"{author.NicknameMention}: Sending you a PM!");
+
 
 			if (!info.HasArguments)
 			{

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Humanizer;
@@ -41,8 +44,12 @@ namespace XenoBot2.Commands
 			   $"ID:				{author.Id}\n" +
 			   $"Bot:				{author.IsBot}\n" +
 			   $"Avatar:			{author.AvatarUrl}\n" +
-			   $"User Flags (Ag):	{Program.BotInstance.Manager.GetPermissionFlag(author, channel)}\n" +
-			   $"User Flags (G):	{Program.BotInstance.Manager.GetPermissionFlag(author, null)}" + 
+			   $"Roles:				{string.Join(", ", author.Roles.Where(item => !item.IsEveryone).Select(item => item.Name))}\n" +
+			   $"JoinedAt:			{author.JoinedAt}\n" +
+			   $"LastActivity:		{author.LastActivityAt}\n" +
+			   $"LastOnline:		{author.LastOnlineAt}\n" +
+			   $"User Flags (Ag):	{Program.BotInstance.Manager.GetFlag(author, channel)}\n" +
+			   $"User Flags (G):	{Program.BotInstance.Manager.GetFlag(author, null)}\n" + 
 			   "```";
 
 		internal static async Task ConvertNumber(CommandInfo info, User author, Channel channel)
@@ -96,9 +103,11 @@ namespace XenoBot2.Commands
 				: info.Arguments.First().GetMemberFromMention(channel);
 			if (author == null)
 			{
+				Utilities.WriteLog(member, "requested information on a user, but the user did not exist.");
 				await channel.SendMessage("User does not exist.");
 				return;
 			}
+			Utilities.WriteLog(member, $"requested information on user {author.GetFullUsername()}.");
 			await channel.SendMessage(GetInfoString(author, channel));
 		}
 
@@ -110,9 +119,11 @@ namespace XenoBot2.Commands
 			if (author == null)
 			{
 				await channel.SendMessage("User does not exist.");
+				Utilities.WriteLog(member, "requested  the avatar of a user, but the user did not exist.");
 				return;
 			}
 
+			Utilities.WriteLog(member, $"requested the avatar of user {author.GetFullUsername()}.");
 			await channel.SendMessage(
 				string.IsNullOrWhiteSpace(author.AvatarUrl)
 					? "https://www.lohikar.io/i/xb/avatar_missing.jpg"

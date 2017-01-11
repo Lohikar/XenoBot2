@@ -9,11 +9,12 @@ namespace XenoBot2
 	{
 		public static CommandInfo ParseCommand(string commandline, Channel channelContext)
 		{
-			var chunks = commandline.Split(' ');
-			var cmdinfo = new CommandInfo();
-
-			if (chunks.LessThan(1))
+			if (string.IsNullOrEmpty(commandline) || commandline.Length > 200)
 				return null;
+
+			var chunks = commandline.Split(' ');
+
+			var cmdinfo = new CommandInfo();
 
 			var cmd = chunks.First();
 

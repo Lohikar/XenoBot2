@@ -17,6 +17,11 @@ namespace XenoBot2.Commands
 		/// </summary>
 		internal static async Task HaltBot(CommandInfo info, User author, Channel channel)
 		{
+			if (!Utilities.Permitted(UserFlag.BotAdministrate, author))
+			{
+				Utilities.WriteLog("WARNING: PERMISSION CHECK FAILED ON HALT!");
+				return;
+			}
 			Utilities.WriteLog(author, "is shutting down the bot.");
 			await channel.SendMessage("Bot shutting down.");
 			Thread.Sleep(1.Seconds());
@@ -37,7 +42,7 @@ namespace XenoBot2.Commands
 
 			var user = info.Arguments.First().GetMemberFromMention(channel);
 
-			if (Utilities.ToggleIgnore(member.Id))
+			if (Utilities.ToggleIgnoreGlobal(member))
 			{
 				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()} globally.");
 				await channel.SendMessage($"Now ignoring {user.NicknameMention} everywhere.");

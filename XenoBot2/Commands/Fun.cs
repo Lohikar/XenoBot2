@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Discord;
@@ -56,6 +58,62 @@ namespace XenoBot2.Commands
 				Utilities.WriteLog(author, "requested a random cat.");
 				await channel.SendMessage($"{author.NicknameMention}: {result.file}");
 			}
+		}
+
+		internal static async Task RollDie(CommandInfo info, User author, Channel channel)
+		{
+			var rand = new Random();
+			if (info.HasArguments)
+			{
+				// assume format XdX
+				string[] arg;
+				if (info.Arguments.Count == 1)
+				{
+					arg = info.Arguments.First().Split('d');
+				}
+				else if (info.Arguments.AtLeast(2))
+				{
+					arg = info.Arguments.ToArray();
+				}
+				else
+				{
+					await channel.SendMessage("Malformed arguments.");
+					return;
+				}
+				int numDies;
+				if (!int.TryParse(arg[0], out numDies))
+				{
+					await channel.SendMessage("Malformed arguments: unable to parse number of dies.");
+					return;
+				}
+				if (numDies > 400)
+				{
+					await channel.SendMessage("Unable to roll: too many dice.");
+					return;
+				}
+				int numSides;
+				if (!int.TryParse(arg[1], out numSides))
+				{
+					await channel.SendMessage("Malformed arguments: unable to parse number of sides.");
+					return;
+				}
+				Utilities.WriteLog(author, $"rolled a {numDies}d{numSides}.");
+				var results = new List<int>();
+				for (var i = 0; i < numDies; i++)
+				{
+					results.Add(rand.Next(1, numSides));
+				}
+
+				var output = $"Rolled {numDies}d{numSides}\nResult: {string.Join(" + ", results)} = {results.Sum()}";
+				if (output.Length >= 2000)
+				{
+					await channel.SendMessage("Unable to roll: resultant output is too long.");
+				}
+				await channel.SendMessage(output);
+				return;
+			}
+			Utilities.WriteLog(author, "Rolled a 1d6 (default).");
+			await channel.SendMessage($"Rolled 1d6\nResult: {rand.Next(1, 6)}");
 		}
 	}
 }

@@ -71,12 +71,12 @@ namespace XenoBot2
 
 				foreach (var user in conf?.BotAdmins ?? new ulong[0])
 				{
-					Manager.AddGlobalPermission(user, UserFlag.BotAdministrator);
+					Manager.AddGlobalFlag(user, UserFlag.BotAdministrate);
 				}
 
 				foreach (var user in conf?.BotDebuggers ?? new ulong[0])
 				{
-					Manager.AddGlobalPermission(user, UserFlag.BotDebug);
+					Manager.AddGlobalFlag(user, UserFlag.Debug);
 				}
 			}
 			timer.Stop();
@@ -162,7 +162,7 @@ namespace XenoBot2
 			// Process command & execute
 			var cmd = CommandParser.ParseCommand(text, channel);
 
-			if (cmd.State.HasFlag(CommandState.DoesNotExist))
+			if (cmd == null || cmd.State.HasFlag(CommandState.DoesNotExist))
 				return;
 
 			var bound = cmd.BoundCommand;
@@ -172,6 +172,13 @@ namespace XenoBot2
 
 			if (!bound.Flags.HasFlag(CommandFlag.UsableWhileIgnored) && Utilities.Permitted(UserFlag.Ignored, author, channel))
 				return;
+
+			if (!Utilities.Permitted(bound.Permission, author, channel))
+			{
+				await channel.SendMessage("You are not authorized to run that command here.");
+				Utilities.WriteLog(author, $"was denied access to command '{cmd.CommandText}'");
+				return;
+			}
 
 			if ((bound.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.IsPrivate) ||
 			    bound.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.IsPrivate)
