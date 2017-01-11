@@ -14,28 +14,28 @@ namespace XenoBot2.Commands
 {
 	internal static class Utility
 	{
-		internal static async Task Echo(CommandInfo info, User author, Channel channel)
+		internal static async Task Echo(CommandInfo info, Message msg)
 		{
-			Utilities.WriteLog(author, "requested an echo.");
-			await channel.SendMessage($"{author.Name} said: {string.Join(" ", info.Arguments)}");
+			Utilities.WriteLog(msg.User, "requested an echo.");
+			await msg.Channel.SendMessage($"{msg.Channel.Name} said: {string.Join(" ", info.Arguments)}");
 		}
 
-		internal static async Task Time(CommandInfo info, User author, Channel channel)
+		internal static async Task Time(CommandInfo info, Message msg)
 		{
-			Utilities.WriteLog(author, "requested the time.");
-			await channel.SendMessage($"The time is {DateTime.UtcNow.ToLongTimeString()} (UTC).");
+			Utilities.WriteLog(msg.User, "requested the time.");
+			await msg.Channel.SendMessage($"The time is {DateTime.UtcNow.ToLongTimeString()} (UTC).");
 		}
 
-		internal static async Task Date(CommandInfo info, User author, Channel channel)
+		internal static async Task Date(CommandInfo info, Message msg)
 		{
-			Utilities.WriteLog(author, "requested the date.");
-			await channel.SendMessage($"It is {DateTime.UtcNow.ToLongDateString()} (UTC).");
+			Utilities.WriteLog(msg.User, "requested the date.");
+			await msg.Channel.SendMessage($"It is {DateTime.UtcNow.ToLongDateString()} (UTC).");
 		}
 
-		internal static async Task Me(CommandInfo info, User origin, Channel channel)
+		internal static async Task Me(CommandInfo info, Message msg)
 		{
-			Utilities.WriteLog(origin, "requested info about themselves.");
-			await channel.SendMessage(GetInfoString(origin, channel));
+			Utilities.WriteLog(msg.User, "requested info about themselves.");
+			await msg.Channel.SendMessage(GetInfoString(msg.User, msg.Channel));
 		}
 
 		private static string GetInfoString(User author, Channel channel)
@@ -52,17 +52,17 @@ namespace XenoBot2.Commands
 			   $"User Flags (G):	{Program.BotInstance.Manager.GetFlag(author, null)}\n" + 
 			   "```";
 
-		internal static async Task ConvertNumber(CommandInfo info, User author, Channel channel)
+		internal static async Task ConvertNumber(CommandInfo info, Message msg)
 		{
 			if (info.Arguments.LessThan(2))
 			{
-				await channel.SendMessage(Messages.CommandNotEnoughArguments);
+				await msg.Channel.SendMessage(Messages.CommandNotEnoughArguments);
 				return;
 			}
 			int number;
 			if (!int.TryParse(info.Arguments[1], out number))
 			{
-				await channel.SendMessage($"{info.Arguments[1]} is not a valid integer.");
+				await msg.Channel.SendMessage($"{info.Arguments[1]} is not a valid integer.");
 				return;
 			}
 			try
@@ -70,70 +70,70 @@ namespace XenoBot2.Commands
 				switch (info.Arguments[0])
 				{
 					case "roman":
-						await channel.SendMessage($"{number} in roman numerals is {number.ToRoman()}.");
+						await msg.Channel.SendMessage($"{number} in roman numerals is {number.ToRoman()}.");
 						break;
 
 					case "words":
-						await channel.SendMessage($"{number} in words is {number.ToWords()}.");
+						await msg.Channel.SendMessage($"{number} in words is {number.ToWords()}.");
 						break;
 
 					case "metric":
-						await channel.SendMessage($"{number} in metric is {number.ToMetric()}.");
+						await msg.Channel.SendMessage($"{number} in metric is {number.ToMetric()}.");
 						break;
 
 					case "wordord":
-						await channel.SendMessage($"{number} is {number.ToOrdinalWords()}.");
+						await msg.Channel.SendMessage($"{number} is {number.ToOrdinalWords()}.");
 						break;
 
 					default:
-						await channel.SendMessage($"Unknown conversion type *{info.Arguments[0]}*.");
+						await msg.Channel.SendMessage($"Unknown conversion type *{info.Arguments[0]}*.");
 						break;
 				}
 			}
 			catch (ArgumentOutOfRangeException)
 			{
-				await channel.SendMessage("Error: number out of range.");
+				await msg.Channel.SendMessage("Error: number out of range.");
 			}
 		}
 
-		internal static async Task UserInfo(CommandInfo info, User member, Channel channel)
+		internal static async Task UserInfo(CommandInfo info, Message msg)
 		{
 			var author = !info.HasArguments 
-				? member 
-				: info.Arguments.First().GetMemberFromMention(channel);
+				? msg.User
+				: info.Arguments.First().GetMemberFromMention(msg.Channel);
 			if (author == null)
 			{
-				Utilities.WriteLog(member, "requested information on a user, but the user did not exist.");
-				await channel.SendMessage("User does not exist.");
+				Utilities.WriteLog(msg.User, "requested information on a user, but the user did not exist.");
+				await msg.Channel.SendMessage("User does not exist.");
 				return;
 			}
-			Utilities.WriteLog(member, $"requested information on user {author.GetFullUsername()}.");
-			await channel.SendMessage(GetInfoString(author, channel));
+			Utilities.WriteLog(msg.User, $"requested information on user {author.GetFullUsername()}.");
+			await msg.Channel.SendMessage(GetInfoString(author, msg.Channel));
 		}
 
-		internal static async Task Avatar(CommandInfo info, User member, Channel channel)
+		internal static async Task Avatar(CommandInfo info, Message msg)
 		{
 			var author = !info.HasArguments
-				? member
-				: info.Arguments[0].GetMemberFromMention(channel);
+				? msg.User
+				: info.Arguments[0].GetMemberFromMention(msg.Channel);
 			if (author == null)
 			{
-				await channel.SendMessage("User does not exist.");
-				Utilities.WriteLog(member, "requested  the avatar of a user, but the user did not exist.");
+				await msg.Channel.SendMessage("User does not exist.");
+				Utilities.WriteLog(msg.User, "requested  the avatar of a user, but the user did not exist.");
 				return;
 			}
 
-			Utilities.WriteLog(member, $"requested the avatar of user {author.GetFullUsername()}.");
-			await channel.SendMessage(
+			Utilities.WriteLog(msg.User, $"requested the avatar of user {author.GetFullUsername()}.");
+			await msg.Channel.SendMessage(
 				string.IsNullOrWhiteSpace(author.AvatarUrl)
 					? "https://www.lohikar.io/i/xb/avatar_missing.jpg"
 					: author.AvatarUrl);
 		}
 
-		internal static async Task Ping(CommandInfo info, User member, Channel channel)
+		internal static async Task Ping(CommandInfo info, Message msg)
 		{
-			Utilities.WriteLog(member, "requested a ping.");
-			await channel.SendMessage(info.CommandText == "ping" ? "pong" : $"{info.CommandText} response");
+			Utilities.WriteLog(msg.User, "requested a ping.");
+			await msg.Channel.SendMessage(info.CommandText == "ping" ? "pong" : $"{info.CommandText} response");
 		}
 	}
 }

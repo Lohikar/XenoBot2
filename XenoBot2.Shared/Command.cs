@@ -49,5 +49,5 @@ namespace XenoBot2.Shared
 		public RunnableCommand Definition { get; set; }
 	}
 
-	public delegate Task RunnableCommand(CommandInfo info, User member, Channel channel);
+	public delegate Task RunnableCommand(CommandInfo info, Message msg);
 }

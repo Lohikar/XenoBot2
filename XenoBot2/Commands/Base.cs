@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using XenoBot2.Data;
 using XenoBot2.Shared;
+using static XenoBot2.Utilities;
 
 namespace XenoBot2.Commands
 {
@@ -14,22 +15,22 @@ namespace XenoBot2.Commands
 	/// </summary>
 	internal static class Base
 	{
-		internal static async Task Help(CommandInfo info, User author, Channel channel)
+		internal static async Task Help(CommandInfo info, Message msg)
 		{
 			Func<string, Task> send = async s =>
 			{
-				if (author.PrivateChannel == null)
-					await author.CreatePMChannel();
-				await author.PrivateChannel.SendMessage(s);
+				if (msg.User.PrivateChannel == null)
+					await msg.User.CreatePMChannel();
+				await msg.User.PrivateChannel.SendMessage(s);
 				Thread.Sleep(100);
 			};
-			if (!channel.IsPrivate)
-				await channel.SendMessage($"{author.NicknameMention}: Sending you a PM!");
+			if (!msg.Channel.IsPrivate)
+				await msg.Channel.SendMessage($"{msg.User.NicknameMention}: Sending you a PM!");
 
 
 			if (!info.HasArguments)
 			{
-				Utilities.WriteLog(author, "requested help index.");
+				WriteLog(msg.User, "requested help index.");
 
 				await send(Messages.HelpTextHeader);
 				// show list of commands + shorthelp
@@ -38,8 +39,8 @@ namespace XenoBot2.Commands
 
 				var helpLines = from item in Program.BotInstance.Commands
 								where item.Value != null
-								let channelPermitted = Utilities.Permitted(item.Value.Permission, author, channel)
-								let globalPermitted = Utilities.Permitted(item.Value.Permission, author)
+								let channelPermitted = Permitted(item.Value.Permission, msg.User, msg.Channel)
+								let globalPermitted = Permitted(item.Value.Permission, msg.User)
 								where !item.Value.Flags.HasFlag(CommandFlag.Hidden) && channelPermitted
 								let num = iter++
 								group GenerateHelpEntry(item.Value, item.Key, channelPermitted, globalPermitted) by num / 10 into items
@@ -60,14 +61,14 @@ namespace XenoBot2.Commands
 				if (!Program.BotInstance.Commands.Contains(info.Arguments[0])) return;
 				var cmd = Program.BotInstance.Commands[info.Arguments[0]].ResolveCommand();
 
-				Utilities.WriteLog(author, $"requested help page '{info.Arguments[0]}'");
+				WriteLog(msg.User, $"requested help page '{info.Arguments[0]}'");
 				var builder = new StringBuilder();
 				builder.AppendLine("```");
 				builder.AppendLine($"Help - {info.Arguments[0]}");
 				builder.AppendLine("---");
 				builder.AppendLine($"Category: {cmd.HelpCategory}");
 				builder.AppendLine($"Authorization: {cmd.Permission}");
-				builder.AppendLine(GeneratePermissionLine(cmd, author, channel));
+				builder.AppendLine(GeneratePermissionLine(cmd, msg.User, msg.Channel));
 				builder.Append("Arguments: ");
 				builder.AppendLine(string.IsNullOrWhiteSpace(cmd.Arguments) ? "{none}" : cmd.Arguments);
 				if (!string.IsNullOrWhiteSpace(cmd.HelpText))
@@ -88,8 +89,8 @@ namespace XenoBot2.Commands
 
 		private static string GeneratePermissionLine(Command cmd, User user, Channel channel)
 		{
-			var globalPermitted = Utilities.Permitted(cmd.Permission, user);
-			var channelPermitted = Utilities.Permitted(cmd.Permission, user, channel);
+			var globalPermitted = Permitted(cmd.Permission, user);
+			var channelPermitted = Permitted(cmd.Permission, user, channel);
 
 			if (globalPermitted) return "You are globally permitted to use this command.";
 			return channelPermitted ? $"You are permitted to use this command in channel '{channel.Name}'." : "You are not permitted to use this command.";
@@ -112,19 +113,17 @@ namespace XenoBot2.Commands
 
 			builder.AppendLine($"Required Permissions: {cmd.Permission}");
 
-			if (!string.IsNullOrWhiteSpace(helptext))
-			{
-				builder.Append(" -> ");
-				builder.AppendLine(helptext);	
-			}
-			
+			if (string.IsNullOrWhiteSpace(helptext)) return builder.ToString();
+			builder.Append(" -> ");
+			builder.AppendLine(helptext);
+
 			return builder.ToString();
 		}
 
-		internal static async Task Version(CommandInfo info, User author, Channel channel)
+		internal static async Task Version(CommandInfo info, Message msg)
 		{
-			Utilities.WriteLog(author, "requested bot version.");
-			await channel.SendMessage($"`XenoBot2 v{Utilities.GetVersion()} {Program.BuildType}`");
+			WriteLog(msg.User, "requested bot version.");
+			await msg.Channel.SendMessage($"`XenoBot2 v{GetVersion()} {Program.BuildType}`");
 		}
 	}
 }

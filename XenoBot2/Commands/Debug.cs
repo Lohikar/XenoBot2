@@ -6,41 +6,41 @@ namespace XenoBot2.Commands
 {
 	internal static class Debug
 	{
-		internal static async Task Cmdinfo(CommandInfo info, User author, Channel channel)
+		internal static async Task Cmdinfo(CommandInfo info, Message msg)
 		{
 			if (!info.HasArguments)
 			{
-				await channel.SendMessage("Not enough arguments.");
+				await msg.Channel.SendMessage("Not enough arguments.");
 				return;
 			}
 			var cmdtxt = string.Join(" ", info.Arguments);
-			Utilities.WriteLog(author, $"requested cmdinfo for '{cmdtxt}'");
-			var cmd = CommandParser.ParseCommand(cmdtxt, channel);
+			Utilities.WriteLog(msg.User, $"requested cmdinfo for '{cmdtxt}'");
+			var cmd = CommandParser.ParseCommand(cmdtxt, msg.Channel);
 			if (cmd == null)
 			{
-				await channel.SendMessage("Error: Command is not defined");
+				await msg.Channel.SendMessage("Error: Command is not defined");
 				return;
 			}
 			var cmddata = Program.BotInstance.Commands[cmd.CommandText].ResolveCommand();
-			await channel.SendMessage($"Input: {cmdtxt}\n" +
+			await msg.Channel.SendMessage($"Input: {cmdtxt}\n" +
 									 "```\n" +
 									 $"CmdText: {cmd.CommandText}\n" +
 									 $"Flags: {cmddata.Flags}\n" +
-									 $"LocalState: {Program.BotInstance.CommandStateData[cmdtxt, channel.Id]}\n" +
+									 $"LocalState: {Program.BotInstance.CommandStateData[cmdtxt, msg.Channel.Id]}\n" +
 									 $"GlobalState: {Program.BotInstance.CommandStateData[cmdtxt]}\n" +
 									 $"PermissionFlags: {cmddata.Permission}\n" +
 									 $"Category: {cmddata.HelpCategory}\n" +
 									 "```");
 		}
 
-		internal static async Task GetChannelInfo(CommandInfo info, User author, Channel channel)
+		internal static async Task GetChannelInfo(CommandInfo info, Message msg)
 		{
-			Utilities.WriteLog(author, "requested channel info.");
-			await channel.SendMessage("```\n" +
-			                          $"ID: {channel.Id}\n" +
-			                          $"Name: {channel.Name}\n" +
-			                          $"Private: {channel.IsPrivate}\n" +
-			                          $"Topic: {channel.Topic}\n" +
+			Utilities.WriteLog(msg.User, "requested channel info.");
+			await msg.Channel.SendMessage("```\n" +
+			                          $"ID: {msg.Channel.Id}\n" +
+			                          $"Name: {msg.Channel.Name}\n" +
+			                          $"Private: {msg.Channel.IsPrivate}\n" +
+			                          $"Topic: {msg.Channel.Topic}\n" +
 			                          "```");
 		}
 	}

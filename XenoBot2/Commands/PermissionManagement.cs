@@ -12,7 +12,7 @@ namespace XenoBot2.Commands
 {
 	internal static class PermissionManagement
 	{
-		internal static async Task AddPermission(CommandInfo info, User author, Channel channel)
+		internal static async Task AddPermission(CommandInfo info, Message msg)
 		{
 			// format: ".addperm @User Administrator
 		}

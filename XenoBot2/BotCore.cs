@@ -13,9 +13,10 @@ namespace XenoBot2
 	{
 		private DiscordClient _client;
 
-		private char _prefix;
 		private string _key;
 		private readonly string _configPath = Path.Combine("Data", "config.xml");
+
+		public char Prefix { get; private set; }
 
 		public ServerManager Manager;
 		public TwoKeyDictionary<string, ulong, CommandState> CommandStateData;
@@ -30,14 +31,44 @@ namespace XenoBot2
 			Utilities.WriteLog($"XenoBot2 v{Utilities.GetVersion()} starting initialization...");
 
 			// Initialize command storage, needs to be done before config load
-			InitializeStorage();
+			Commands = new CommandStore();
+			// load default commands
+			Commands.AddMany(DefaultCommands.Content);
+			CommandStateData = new TwoKeyDictionary<string, ulong, CommandState>(CommandState.None, 0);
+			Manager = new ServerManager();
 
 			var timer = new Stopwatch();
-			var serializer = new XmlSerializer(typeof(Config));
-
+			
 			Utilities.WriteLog("Looking for config...");
 			timer.Start();
 
+			await LoadConfig();
+			
+			timer.Stop();
+
+			Utilities.WriteLog($"Config load took {timer.ElapsedMilliseconds} ms.");
+
+			if (!Directory.Exists("Data"))
+				Directory.CreateDirectory("Data");
+
+			Utilities.WriteLog("Setting up command data...");
+			timer.Restart();
+			Strings.WhatTheCommit = (await Utilities.GetAsset("https://www.lohikar.io/assets/xenobot/commits.txt", "wtc.txt")).Split('\n');
+			Strings.Names = (await Utilities.GetAsset("https://www.lohikar.io/assets/xenobot/names.txt", "wtc_names.txt")).Split('\n');
+			timer.Stop();
+			Utilities.WriteLog($"Done setting up command data; took {timer.ElapsedMilliseconds} ms.");
+
+			// initialize client
+			_client = new DiscordClient();
+			_client.MessageReceived += MessageReceived;
+			_client.Ready += OnReady;
+
+			Utilities.WriteLog("Done initialization.");
+		}
+
+		private async Task LoadConfig()
+		{
+			var serializer = new XmlSerializer(typeof(Config));
 			if (!File.Exists(_configPath))
 			{
 				Utilities.WriteLog("Config not found, creating.");
@@ -59,8 +90,8 @@ namespace XenoBot2
 				{
 					Utilities.WriteLog("WARNING: Unknown config version!");
 				}
-				_prefix = conf?.CommandPrefix ?? '$';
-				Utilities.WriteLog($"Command prefix set to '{_prefix}'.");
+				Prefix = conf?.CommandPrefix ?? '$';
+				Utilities.WriteLog($"Command prefix set to '{Prefix}'.");
 				_key = conf?.ApiToken;
 				if (string.IsNullOrWhiteSpace(_key))
 				{
@@ -79,46 +110,6 @@ namespace XenoBot2
 					Manager.AddGlobalFlag(user, UserFlag.Debug);
 				}
 			}
-			timer.Stop();
-
-			Utilities.WriteLog($"Config load took {timer.ElapsedMilliseconds} ms.");
-
-			if (!Directory.Exists("Data"))
-				Directory.CreateDirectory("Data");
-
-			Utilities.WriteLog("Setting up command data...");
-			timer.Restart();
-			Strings.WhatTheCommit = (await GetAsset("https://www.lohikar.io/assets/xenobot/commits.txt", "wtc.txt")).Split('\n');
-			Strings.Names = (await GetAsset("https://www.lohikar.io/assets/xenobot/names.txt", "wtc_names.txt")).Split('\n');
-			timer.Stop();
-			Utilities.WriteLog($"Done setting up command data; took {timer.ElapsedMilliseconds} ms.");
-
-			// initialize client
-			_client = new DiscordClient();
-			_client.MessageReceived += MessageReceived;
-			_client.Ready += (s, e) =>
-			{
-				_client.SetGame($"v{Utilities.GetVersion()}-{Program.BuildTypeShort}");
-				Utilities.WriteLog($"Logged into Discord as {_client.CurrentUser.GetFullUsername()}.");
-				Console.Title = $"{_client.CurrentUser.GetFullUsername()} - XenoBot2 v{Utilities.GetVersion()} {Program.BuildType}";
-			};
-
-			Utilities.WriteLog("Done initialization.");
-		}
-
-		private async void MessageReceived(object sender, MessageEventArgs e)
-		{
-			if (!e.Message.IsAuthor)
-				await ParseMessage(e.User, e.Channel, e.Message.RawText, e.Channel.IsPrivate);
-		}
-
-		private void InitializeStorage()
-		{
-			Commands = new CommandStore();
-			// load default commands
-			Commands.AddMany(DefaultCommands.Content);
-			CommandStateData = new TwoKeyDictionary<string, ulong, CommandState>(CommandState.None, 0);
-			Manager = new ServerManager();
 		}
 
 		private async Task LoadApiKey(string path)
@@ -152,72 +143,21 @@ namespace XenoBot2
 			});
 		}
 
-		private async Task ParseMessage(User author, Channel channel, string messageText, bool skipPrefix = false)
+		#region Event Handlers
+
+		private static async void MessageReceived(object sender, MessageEventArgs e)
 		{
-			// silently ignore our own messages & messages from other bots
-			if (string.IsNullOrWhiteSpace(messageText) || (messageText[0] != _prefix && !skipPrefix)) return;
-
-			var text = skipPrefix ? messageText : messageText.Substring(1);
-
-			// Process command & execute
-			var cmd = CommandParser.ParseCommand(text, channel);
-
-			if (cmd == null || cmd.State.HasFlag(CommandState.DoesNotExist))
-				return;
-
-			var bound = cmd.BoundCommand;
-
-			if (bound == null)
-				return;
-
-			if (!bound.Flags.HasFlag(CommandFlag.UsableWhileIgnored) && Utilities.Permitted(UserFlag.Ignored, author, channel))
-				return;
-
-			if (!Utilities.Permitted(bound.Permission, author, channel))
-			{
-				await channel.SendMessage("You are not authorized to run that command here.");
-				Utilities.WriteLog(author, $"was denied access to command '{cmd.CommandText}'");
-				return;
-			}
-
-			if ((bound.Flags.HasFlag(CommandFlag.NoPrivateChannel) && channel.IsPrivate) ||
-			    bound.Flags.HasFlag(CommandFlag.NoPublicChannel) && !channel.IsPrivate)
-			{
-				await channel.SendMessage("That command cannot be used here.");
-				return;
-			}
-			try
-			{
-				// execute command
-				await cmd.BoundCommand.Definition(cmd, author, channel);
-			}
-			catch (NotImplementedException)
-			{
-				Utilities.WriteLog(author, $"attempted to use unimplemented command '{cmd.CommandText}'.");
-				await channel.SendMessage("Sorry, but that command is not finished yet.");
-			}
-			//catch (Exception ex)
-			//{
-			//	Utilities.WriteLog($"An exception occurred during execution of command '{cmd.CommandText}'," +
-			//	                   $" args '{string.Join(", ", cmd.Arguments)}'.\n" + ex.Message);
-			//	await channel.SendMessage($"An internal error occurred running command '{cmd.CommandText}'.");
-			//}
+			if (!e.Message.IsAuthor && !e.Message.User.IsBot)
+				await CommandParser.ParseMessage(e.Message, e.Channel.IsPrivate);
 		}
 
-		private static async Task<string> GetAsset(string url, string cacheFileName)
+		private void OnReady(object sender, EventArgs e)
 		{
-			var path = Path.Combine("Data", cacheFileName);
-
-			if (File.Exists(path))
-				using (var reader = File.OpenText(path))
-					return await reader.ReadToEndAsync();
-
-			var asset = await Shared.Utilities.GetStringAsync(url);
-			using (var writer = new FileStream(path, FileMode.CreateNew))
-			using (var text = new StreamWriter(writer))
-				await text.WriteAsync(asset);
-
-			return asset;
+			_client.SetGame($"v{Utilities.GetVersion()}-{Program.BuildTypeShort}");
+			Utilities.WriteLog($"Logged into Discord as {_client.CurrentUser.GetFullUsername()}.");
+			Console.Title = $"{_client.CurrentUser.GetFullUsername()} - XenoBot2 v{Utilities.GetVersion()} {Program.BuildType}";
 		}
+
+		#endregion
 	}
 }

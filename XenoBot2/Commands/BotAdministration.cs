@@ -15,15 +15,15 @@ namespace XenoBot2.Commands
 		/// <summary>
 		///		Terminates the bot.
 		/// </summary>
-		internal static async Task HaltBot(CommandInfo info, User author, Channel channel)
+		internal static async Task HaltBot(CommandInfo info, Message msg)
 		{
-			if (!Utilities.Permitted(UserFlag.BotAdministrate, author))
+			if (!Utilities.Permitted(UserFlag.BotAdministrate, msg.User))
 			{
 				Utilities.WriteLog("WARNING: PERMISSION CHECK FAILED ON HALT!");
 				return;
 			}
-			Utilities.WriteLog(author, "is shutting down the bot.");
-			await channel.SendMessage("Bot shutting down.");
+			Utilities.WriteLog(msg.User, "is shutting down the bot.");
+			await msg.Channel.SendMessage("Bot shutting down.");
 			Thread.Sleep(1.Seconds());
 			await Program.BotInstance.Exit();
 		}
@@ -31,26 +31,26 @@ namespace XenoBot2.Commands
 		/// <summary>
 		///		Toggles the global ignore status for a user.
 		/// </summary>
-		internal static async Task GlobalIgnoreUser(CommandInfo info, User member, Channel channel)
+		internal static async Task GlobalIgnoreUser(CommandInfo info, Message msg)
 		{
 			if (!info.HasArguments)
 			{
-				Utilities.WriteLog(member, "tried to ignore, but forgot to say who to ignore.");
-				await channel.SendMessage("You must specify who to ignore.");
+				Utilities.WriteLog(msg.User, "tried to ignore, but forgot to say who to ignore.");
+				await msg.Channel.SendMessage("You must specify who to ignore.");
 				return;
 			}
 
-			var user = info.Arguments.First().GetMemberFromMention(channel);
+			var user = info.Arguments.First().GetMemberFromMention(msg.Channel);
 
-			if (Utilities.ToggleIgnoreGlobal(member))
+			if (Utilities.ToggleIgnoreGlobal(user))
 			{
-				Utilities.WriteLog(member, $"ignored {user.GetFullUsername()} globally.");
-				await channel.SendMessage($"Now ignoring {user.NicknameMention} everywhere.");
+				Utilities.WriteLog(msg.User, $"ignored {user.GetFullUsername()} globally.");
+				await msg.Channel.SendMessage($"Now ignoring {user.NicknameMention} everywhere.");
 			}
 			else
 			{
-				Utilities.WriteLog(member, $"unignored {user.GetFullUsername()} globally.");
-				await channel.SendMessage($"No longer ignoring {user.NicknameMention} everywhere (unless specifically ignored elsewhere).");
+				Utilities.WriteLog(msg.User, $"unignored {user.GetFullUsername()} globally.");
+				await msg.Channel.SendMessage($"No longer ignoring {user.NicknameMention} everywhere (unless specifically ignored elsewhere).");
 			}
 		}
 

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using Discord;
 using XenoBot2.Shared;
 
@@ -19,14 +21,7 @@ namespace XenoBot2
 			=> command.AliasFor == null ? command : Program.BotInstance.Commands[command.AliasFor];
 
 		internal static bool Permitted(UserFlag flag, User member, Channel channel = null)
-			=> Permitted(flag, member.Id, channel);
-
-		internal static bool Permitted(UserFlag flag, ulong member, Channel channel = null)
-		{
-			var data = Program.BotInstance.Manager.GetFlag(member, channel);
-
-			return data.HasFlag(flag);
-		}
+			=> Program.BotInstance.Manager.GetFlag(member, channel).HasFlag(flag);
 
 		internal static bool HasState(CommandState flag, string command, ulong? channel = null)
 		{
@@ -83,7 +78,6 @@ namespace XenoBot2
 		///     Toggles the ignore state for a user, globally or per-channel.
 		/// </summary>
 		/// <param name="user">The user to toggle ignore for.</param>
-		/// <param name="context">The channel to ignore on. Omit for global.</param>
 		/// <returns>True if user is now ignored, false if not.</returns>
 		public static bool ToggleIgnoreGlobal(User user)
 		{
@@ -97,6 +91,28 @@ namespace XenoBot2
 				Program.BotInstance.Manager.AddGlobalFlag(user, UserFlag.Ignored);
 			}
 			return ignoreState;
+		}
+
+		/// <summary>
+		///		Downloads a text file as a string, caching it for later queries.
+		/// </summary>
+		/// <param name="url">The URL to download.</param>
+		/// <param name="cacheFileName">The local cache filename to write to. The file cannot already exist.</param>
+		/// <returns></returns>
+		public static async Task<string> GetAsset(string url, string cacheFileName)
+		{
+			var path = Path.Combine("Data", cacheFileName);
+
+			if (File.Exists(path))
+				using (var reader = File.OpenText(path))
+					return await reader.ReadToEndAsync();
+
+			var asset = await Shared.Utilities.GetStringAsync(url);
+			using (var writer = new FileStream(path, FileMode.CreateNew))
+			using (var text = new StreamWriter(writer))
+				await text.WriteAsync(asset);
+
+			return asset;
 		}
 	}
 }
